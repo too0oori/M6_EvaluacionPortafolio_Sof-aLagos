@@ -1,3 +1,28 @@
 from django.db import models
 
-# Create your models here.
+class Prestamo(models.Model):
+    usuario = models.ForeignKey('usuarios.PerfilUsuario', on_delete=models.CASCADE)
+    libro = models.ForeignKey('catalogo.Libro', on_delete=models.CASCADE)
+    fecha_prestamo = models.DateTimeField(auto_now_add=True)
+    fecha_devolucion = models.DateTimeField(blank=True, null=True)
+    devuelto = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'Préstamo de {self.libro.titulo} a {self.usuario.username}'
+
+    class Meta:
+        verbose_name = 'Prestamo'
+        verbose_name_plural = 'Prestamos'
+
+class Reserva(models.Model):
+    usuario = models.ForeignKey('usuarios.PerfilUsuario', on_delete=models.CASCADE)
+    libro = models.ForeignKey('catalogo.Libro', on_delete=models.CASCADE)
+    fecha_reserva = models.DateTimeField(auto_now_add=True)
+    activa = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f'Reserva de {self.libro.titulo} por {self.usuario.username}'
+
+    class Meta:
+        verbose_name = 'Reserva'
+        verbose_name_plural = 'Reservas'
