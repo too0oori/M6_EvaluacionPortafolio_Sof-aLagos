@@ -44,6 +44,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'biblioteca_digital.urls'
 
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',

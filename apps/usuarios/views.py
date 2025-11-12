@@ -1,19 +1,38 @@
 from django.shortcuts import render
+from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
+from django.contrib.auth.models import User
+from django.urls import reverse_lazy
+from django.views import View
+from django.views.generic import TemplateView, CreateView, UpdateView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from .forms import RegistroForm, PerfilForm
 
-def login_view(request):
-    return render(request, 'templates/auth/login.html')
+class LoginUsuarioView(LoginView):
+    template_name = "auth/login.html"
+    redirect_authenticated_user = True
 
-def registro_view(request):
-    return render(request, 'templates/auth/registro.html')
+class RegistroUsuarioView(CreateView, View):
+    model = User
+    template_name = "auth/registro.html"
+    form_class = RegistroForm
+    success_url = reverse_lazy("usuarios:login")  # redirige al login tras registrarse
 
-def logout_view(LoginRequiredMixin, request):
-    return render(request, 'templates/auth/logout.html')
+class LogoutUsuarioView(LogoutView):
+    template_name = "auth/logout.html"
 
-def perfil_usuario(LoginRequiredMixin, request):
-    return render(request, 'templates/usuarios/perfil.html')
+class PerfilUsuarioView(LoginRequiredMixin, TemplateView):
+    template_name = "usuarios/perfil.html"
 
-def editar_perfil(LoginRequiredMixin, request):
-    return render(request, 'templates/usuarios/editar_perfil.html')
 
-def cambiar_contrasena(LoginRequiredMixin, request):
-    return render(request, 'templates/usuarios/cambiar_contrasena.html')
+class EditarPerfilView(LoginRequiredMixin, UpdateView):
+    model = User
+    form_class = PerfilForm
+    template_name = "usuarios/editar_perfil.html"
+    success_url = reverse_lazy("usuarios:perfil")
+
+    def get_object(self):
+        return self.request.user
+
+class CambiarContrasenaView(LoginRequiredMixin, PasswordChangeView):
+    template_name = "usuarios/cambiar_contrasena.html"
+    success_url = reverse_lazy("usuarios:perfil")

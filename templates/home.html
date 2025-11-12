@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}Inicio - Biblioteca Digital{% endblock %}
+
+{% block content %}
+    <h1>Bienvenido a la Biblioteca Digital</h1>
+    <p>Explora nuestro catálogo de libros y recursos digitales.</p>
+    <div class="row">
+        <!-- Aquí puedes agregar una vista previa de los libros destacados -->
+    </div>
+    <section>
+        <h2>Servicios Destacados</h2>
+        <ul>
+            <li>Préstamo de libros digitales</li>
+            <li>Acceso a revistas y artículos académicos</li>
+            <li>Soporte en línea y consultas bibliográficas</li>
+        </ul>
+    </section>
+    <div class="container"> <!-- Registro o iniciar sesion -->
+        <div class="row"> <!-- Registro o iniciar sesion -->
+            <div class="col-md-6">
+                <a href="{% url 'usuarios:registro' %}" class="btn btn-primary">Registrarse</a>
+            </div>
+            <div class="col-md-6">
+                <a href="{% url 'usuarios:login' %}" class="btn btn-primary">Iniciar Sesión</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

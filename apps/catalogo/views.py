@@ -1,22 +1,45 @@
+from urllib import request
 from django.shortcuts import render
+from django.views import View
 
-def home(request):
-    return render(request, 'templates/catalogo/home.html')
+class HomePageView(View):
+    template_name = 'catalogo/home.html'
 
-def lista_libros(request):
-    return render(request, 'templates/catalogo/lista_libros.html')
+    def get(self, request):
+        return render(request, self.template_name)
 
-def detalle_libro(request, libro_id):
-    return render(request, 'templates/catalogo/detalle_libro.html', {'libro_id': libro_id})
+class ListaLibrosView(View):
+    template_name = 'catalogo/lista_libros.html'
 
-def buscar_libros(request):
-    return render(request, 'templates/catalogo/buscar_libros.html')
+    def get(self, request):
+        return render(request, self.template_name)
 
-def filtrar_por_categoria(request, categoria):
-    return render(request, 'templates/catalogo/filtrar.html', {'categoria': categoria})
+class DetalleLibroView(View):
+    template_name = 'catalogo/detalle_libro.html'
 
-def lista_autores(request):
-    return render(request, 'templates/catalogo/lista_autores.html')
+    def get(self, request, libro_id):
+        return render(request, self.template_name, {'libro_id': libro_id})
 
-def detalle_autor(request, autor_id):
-    return render(request, 'templates/catalogo/detalle_autor.html', {'autor_id': autor_id})
+class BuscarLibrosView(View):
+    template_name = 'catalogo/buscar_libros.html'
+
+    def get(self, request):
+        return render(request, self.template_name)
+
+class FiltrarPorCategoriaView(View):
+    template_name = 'catalogo/filtrar.html'
+
+    def get(self, request, categoria):
+        return render(request, self.template_name, {'categoria': categoria})
+
+class ListaAutoresView(View):
+    template_name = 'catalogo/lista_autores.html'
+
+    def get(self, request):
+        return render(request, self.template_name)
+
+class DetalleAutorView(View):
+    template_name = 'catalogo/detalle_autor.html'
+
+    def get(self, request, autor_id):
+        return render(request, self.template_name, {'autor_id': autor_id})
