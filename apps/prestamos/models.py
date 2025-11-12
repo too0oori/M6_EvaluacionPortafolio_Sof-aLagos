@@ -4,19 +4,21 @@ class Prestamo(models.Model):
     usuario = models.ForeignKey('usuarios.PerfilUsuario', on_delete=models.CASCADE)
     libro = models.ForeignKey('catalogo.Libro', on_delete=models.CASCADE)
     fecha_prestamo = models.DateTimeField(auto_now_add=True)
-    fecha_devolucion = models.DateTimeField(blank=True, null=True)
+    fecha_devolucion = models.DateField(blank=True, null=True)
     estado = models.CharField(max_length=20, choices=[
-        ('prestado', 'Prestado'),
+        ('activo', 'Activo'),
         ('devuelto', 'Devuelto'),
         ('retrasado', 'Retrasado'),
-    ], default='prestado')
+    ], default='activo')
 
     def __str__(self):
-        return f'Préstamo de {self.libro.titulo} a {self.usuario.username}'
+        # nota: PerfilUsuario -> usuario -> username
+        return f'Préstamo de {self.libro.titulo} a {self.usuario.usuario.username}'
 
     class Meta:
-        verbose_name = 'Prestamo'
-        verbose_name_plural = 'Prestamos'
+        verbose_name = 'Préstamo'
+        verbose_name_plural = 'Préstamos'
+
 
 class Reserva(models.Model):
     usuario = models.ForeignKey('usuarios.PerfilUsuario', on_delete=models.CASCADE)
@@ -29,7 +31,7 @@ class Reserva(models.Model):
     ], default='pendiente')
 
     def __str__(self):
-        return f'Reserva de {self.libro.titulo} por {self.usuario.username}'
+        return f'Reserva de {self.libro.titulo} por {self.usuario.usuario.username}'
 
     class Meta:
         verbose_name = 'Reserva'

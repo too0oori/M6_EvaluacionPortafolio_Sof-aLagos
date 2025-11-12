@@ -4,7 +4,7 @@ from apps.catalogo.models import Autor, Categoria, Libro
 
 @admin.register(Libro)
 class LibroAdmin(admin.ModelAdmin):
-    list_display = ('titulo', 'autor', 'isbn', 'ano_publicacion', 'categoria', 'copias_totales', 'copias_disponibles', 'disponibilidad')
+    list_display = ('titulo', 'autor', 'isbn', 'editorial','ano_publicacion', 'categoria', 'copias_totales', 'copias_disponibles', 'disponibilidad')
     search_fields = ('titulo', 'autor__nombre', 'isbn')
     list_filter = ('categoria', 'ano_publicacion')
     readonly_fields = ('fecha_registro',)
