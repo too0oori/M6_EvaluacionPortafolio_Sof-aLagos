@@ -12,7 +12,6 @@ class Prestamo(models.Model):
     ], default='activo')
 
     def __str__(self):
-        # nota: PerfilUsuario -> usuario -> username
         return f'Préstamo de {self.libro.titulo} a {self.usuario.usuario.username}'
 
     class Meta:
