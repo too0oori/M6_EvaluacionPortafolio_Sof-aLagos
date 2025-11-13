@@ -1,0 +1,169 @@
+:root {
+  --azul-principal: #5a79ff;
+  --azul-profundo: #002e8b;
+  --hielo: #eaf0ff;
+  --gris: #4a4a4a;
+  --negro-suave: #1a1a1a;
+  --fondo: #f7f9ff;
+  --navbar-height: 80px;
+}
+
+body {
+  background: var(--fondo);
+}
+
+.navbar-transparente{
+  background: rgba(255,255,255,0.03) !important;
+  backdrop-filter: blur(14px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(180%) !important;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.navbar-transparente .navbar-brand{
+  color: white !important;
+  font-family: 'Playfair Display', serif !important;
+  font-size: 1.5rem;
+  letter-spacing: -0.5px;
+}
+
+.navbar-transparente .nav-link {
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 500;
+  font-size: 1.1rem;
+  color: white !important;
+}
+
+/* ---- TIPOGRAFÍA ---- */
+
+.titulo-hero {
+  font-family: 'Playfair Display', serif;
+  font-size: 5rem;
+  font-weight: 600;
+  letter-spacing: -1px;
+}
+
+.subtitulo-hero {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.3rem;
+  opacity: 0.9;
+}
+
+.punto {
+  color: #5a79ff;
+}
+
+/* ---- HERO AZUL ---- */
+.hero-azul {
+  min-height: 90vh;
+  background: url('../img/header.jpg') center/cover no-repeat;
+  position: relative;
+  overflow: hidden;
+  background-position: center 40px;
+}
+
+.hero-azul::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    rgba(0, 10, 60, 0.25),
+    rgba(0, 0, 0, 0.15)
+  );
+  backdrop-filter: blur(1px); 
+  z-index: 1;
+}
+
+.hero-azul .container {
+  position: relative;
+  z-index: 2;
+}
+
+/* Botones */
+.btn-light {
+  border-radius: 100px;
+  font-weight: 500;
+}
+
+.btn-outline-light {
+  border-radius: 100px;
+  font-weight: 500;
+}
+
+/* Iconos Bootstrap Icons */
+.icono-feature {
+  font-size: 3rem;
+  color: #1a1a1a;
+  display: block;
+  margin-bottom: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.tarjeta-hover:hover .icono-feature {
+  color: var(--azul-profundo);
+  transform: scale(1.1);
+}
+
+/* Efecto hover sutil en tarjetas */
+.tarjeta-hover {
+  transition: transform 0.3s ease, background-color 0.3s ease;
+  border-radius: 8px;
+}
+
+.tarjeta-hover:hover {
+  transform: translateY(-5px);
+  background-color: var(--hielo);
+}
+
+/* Animación suave de entrada */
+@keyframes aparecerSuave {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Línea decorativa en nav-links al hover */
+.nav-link {
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background-color: var(--azul-profundo);
+  transition: width 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.nav-link:hover::after {
+  width: 80%;
+}
+
+/* Ajuste de badges al hover */
+.badge {
+  transition: all 0.3s ease;
+}
+
+.badge:hover {
+  background-color: var(--azul-profundo) !important;
+  transform: scale(1.05);
+  cursor: default;
+}
+
+.accent {
+  color: var(--azul-profundo);
+}
+
+/* Footer con mejor contraste */
+footer {
+  margin-top: 4rem;
+}

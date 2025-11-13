@@ -1,29 +1,98 @@
 {% extends 'base.html' %}
-
-{% block title %}Inicio - Biblioteca Digital{% endblock %}
+{% load static %}
 
 {% block content %}
-    <h1>Bienvenido a la Biblioteca Digital</h1>
-    <p>Explora nuestro catálogo de libros y recursos digitales.</p>
-    <div class="row">
-        <!-- Aquí puedes agregar una vista previa de los libros destacados -->
-    </div>
-    <section>
-        <h2>Servicios Destacados</h2>
-        <ul>
-            <li>Préstamo de libros digitales</li>
-            <li>Acceso a revistas y artículos académicos</li>
-            <li>Soporte en línea y consultas bibliográficas</li>
-        </ul>
-    </section>
-    <div class="container"> <!-- Registro o iniciar sesion -->
-        <div class="row"> <!-- Registro o iniciar sesion -->
-            <div class="col-md-6">
-                <a href="{% url 'usuarios:registro' %}" class="btn btn-primary">Registrarse</a>
-            </div>
-            <div class="col-md-6">
-                <a href="{% url 'usuarios:login' %}" class="btn btn-primary">Iniciar Sesión</a>
-            </div>
+<section class="hero-azul d-flex align-items-center">
+  <div class="container text-center text-white">
+    <h1 class="titulo-hero">Corpus<span class="punto">.</span></h1>
+        <p class="subtitulo-hero">
+          Una biblioteca digital dedicada a preservar y compartir la obra de autoras contemporáneas
+        </p>
+        
+        <div class="d-flex gap-3 justify-content-center flex-wrap mt-4">
+          {% if user.is_authenticated %}
+            <a href="{% url 'catalogo:lista_libros' %}" class="btn btn-light px-4 py-2">
+              Explorar Catálogo
+            </a>
+            <a href="{% url 'prestamos:mis_prestamos' %}" class="btn btn-outline-dark btn-lg px-4">
+              Mis Préstamos
+            </a>
+          {% else %}
+            <a href="{% url 'catalogo:lista_libros' %}" class="btn btn-light px-4 py-2">
+              Explorar Catálogo
+            </a>
+            <a href="{% url 'usuarios:login' %}" class="btn btn-outline-light px-4 py-2">
+              Iniciar Sesión
+            </a>
+          {% endif %}
         </div>
+      </div>
     </div>
+  </div>
+</section>
+
+<!-- Sección de Características -->
+<section class="py-5">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="text-center p-4 h-100 tarjeta-hover">
+          <i class="bi bi-book icono-feature"></i>
+          <h3 class="h5 fw-bold mb-3">Catálogo Curado</h3>
+          <p class="text-muted small">
+            Selección personal de obras de autoras que exploran cuerpo, memoria y narrativa contemporánea
+          </p>
+        </div>
+      </div>
+      
+      <div class="col-md-4">
+        <div class="text-center p-4 h-100 tarjeta-hover">
+          <i class="bi bi-search icono-feature"></i>
+          <h3 class="h5 fw-bold mb-3">Búsqueda Inteligente</h3>
+          <p class="text-muted small">
+            Sistema de filtrado por autor, género y disponibilidad para encontrar lo que buscas
+          </p>
+        </div>
+      </div>
+      
+      <div class="col-md-4">
+        <div class="text-center p-4 h-100 tarjeta-hover">
+          <i class="bi bi-stars icono-feature"></i>
+          <h3 class="h5 fw-bold mb-3">Gestión Eficiente</h3>
+          <p class="text-muted small">
+            Plataforma desarrollada con Django y Bootstrap para una experiencia fluida
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Sección Acerca de -->
+<section class="py-5 bg-light">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8 text-center">
+        <h2 class="display-6 fw-bold mb-4">Un Archivo Sensible</h2>
+        <p class="lead text-muted mb-4">
+          Este proyecto nace de la intersección entre tecnología y literatura, creando un espacio digital donde la arquitectura de software se encuentra con la materialidad del diseño. Un corpus vivo dedicado exclusivamente a voces de mujeres, que preserva, celebra y comparte sus obras en un entorno contemporáneo.
+Una biblioteca que no solo reúne textos, sino que reivindica sus autorías como parte esencial del paisaje literario y digital.
+        </p>
+        <div class="d-flex gap-2 justify-content-center flex-wrap mt-4">
+          <span class="badge bg-dark px-3 py-2">Django</span>
+          <span class="badge bg-dark px-3 py-2">Python</span>
+          <span class="badge bg-dark px-3 py-2">Bootstrap 5</span>
+          <span class="badge bg-dark px-3 py-2">MySQL</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer Info -->
+<section class="py-5">
+  <div class="container text-center">
+    <p class="text-muted fst-italic">Cuerpo · Memoria · Código</p>
+  </div>
+</section>
 {% endblock %}
