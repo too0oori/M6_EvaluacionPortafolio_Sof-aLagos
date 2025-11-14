@@ -6,6 +6,7 @@
         <div class="col-md-6">
             <img src="{{ libro.portada.url }}" alt="Imagen del libro" class="img-fluid">
         </div>
+
         <div class="col-md-6">
             <h1>{{ libro.titulo }}</h1>
             <p><strong>Autor:</strong> {{ libro.autor }}</p>
@@ -17,17 +18,68 @@
             {% if libro.copias_disponibles > 0 %}
                 <p class="text-success">Disponible para préstamo</p>
 
-                <a href="{% url 'prestamos:solicitar_prestamo' libro.id %}" class="btn btn-primary">
+                <!-- BOTÓN DEL MODAL -->
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalPrestamo">
                     Solicitar Préstamo
-                </a>
+                </button>
+
+                <!-- MODAL -->
+                <div class="modal fade" id="modalPrestamo" tabindex="-1" aria-labelledby="modalPrestamoLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-dialog-centered">
+                        <div class="modal-content">
+
+                            <!-- HEADER -->
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="modalPrestamoLabel">Solicitar Préstamo</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+
+                            <!-- CUERPO -->
+                            <div class="modal-body">
+                                <p>
+                                    Este libro forma parte de un corpus vivo: una constelación de voces de mujeres
+                                    que resisten, recuerdan y escriben para dejar huella.
+                                </p>
+
+                                <ul>
+                                    <li>Tiempo de compañía: 14 días para leerlo, habitarlo y devolverlo al mundo.</li>
+                                    <li>Renovación: posible si nadie más lo espera.</li>
+                                    <li>Disponibilidad: los ejemplares son cuerpos finitos, compartidos.</li>
+                                    <li>Devolución: cuídalo —viaja de mano en mano, sosteniendo memoria.</li>
+                                    <li>Circulación: cada lectura mantiene viva esta cadena de voces.</li>
+                                </ul>
+
+                                <p>Si deseas continuar, <strong>{{ libro.titulo }}</strong> te espera.</p>
+                            </div>
+
+                            <!-- FOOTER -->
+                            <div class="modal-footer">
+                                <form method="post" action="{% url 'prestamos:solicitar_prestamo' libro.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-primary">Confirmar Préstamo</button>
+                                </form>
+
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                    Cancelar
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
 
             {% else %}
                 <p class="text-danger">No hay copias disponibles en este momento</p>
 
-                <a href="{% url 'prestamos:reservar_libro' libro.id %}" class="btn btn-secondary">
-                    Hacer Reserva
-                </a>
+                <form method="post" action="{% url 'prestamos:reservar_libro' libro.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-secondary">
+                        Hacer Reserva
+                    </button>
+                </form>
+
             {% endif %}
+
         </div>
     </div>
 </div>

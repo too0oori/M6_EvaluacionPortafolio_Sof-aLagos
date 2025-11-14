@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Mis Préstamos</h1>
+
+    <div class="container">
+        <div class="row">
+            {% for prestamo in prestamos %}
+                <div class="col-6 col-md-4 col-lg-3">
+                    <div class="card mb-4 h-100">
+                        <img src="{{ prestamo.libro.portada.url }}" class="card-img-top" alt="{{ prestamo.libro.titulo }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ prestamo.libro.titulo }}</h5>
+                            <p class="card-text">Autor: {{ prestamo.libro.autor }}</p>
+                            <p class="card-text">Fecha de Prestamo: {{ prestamo.fecha_prestamo }}</p>
+                            <p class="card-text">Fecha de Devolución: {{ prestamo.fecha_devolucion }}</p>
+                            <p class="card-text">Estado: {{ prestamo.estado }}</p>
+                            <a href ="{% url 'prestamos:renovar_libro' prestamo.id %}" class="btn btn-primary">Renovar</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

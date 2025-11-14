@@ -38,15 +38,18 @@ class SolicitarPrestamoView(LoginRequiredMixin, View):
             libro.save()
 
             messages.success(request, f'¡Préstamo confirmado! Tienes "{libro.titulo}" hasta el {prestamo.fecha_devolucion.strftime("%d/%m/%Y")}')
-            return redirect('prestamos:solicitar_prestamo', libro_id=libro.id)
+            return redirect('catalogo:detalle_libro', libro_id=libro.id)
         else:
             messages.error(request, 'Lo sentimos, no hay copias disponibles de este libro.')
             return redirect('catalogo:detalle_libro', libro_id=libro.id)
     
 class MisPrestamosView(LoginRequiredMixin, View):
     # Lógica para ver los préstamos del usuario
+    template_name = 'prestamos/mis_prestamos.html'
+
     def get(self, request):
-        return render(request, 'prestamos/mis_prestamos.html')
+        prestamos = Prestamo.objects.filter(usuario=request.user.perfilusuario)
+        return render(request, self.template_name, {'prestamos': prestamos})
 
 class HistorialPrestamosView(LoginRequiredMixin, View):
     # Lógica para ver el historial de préstamos
