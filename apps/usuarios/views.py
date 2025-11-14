@@ -17,8 +17,12 @@ class RegistroUsuarioView(CreateView, View):
     form_class = RegistroForm
     success_url = reverse_lazy("usuarios:login")  # redirige al login tras registrarse
 
-class LogoutUsuarioView(LogoutView):
-    template_name = "auth/logout.html"
+class CustomLogoutView(LoginRequiredMixin, LogoutView):
+    """
+    Vista de logout que requiere autenticación.
+    Redirige a la página de login después de cerrar sesión.
+    """
+    next_page = reverse_lazy('usuarios:login')
 
 class PerfilUsuarioView(LoginRequiredMixin, TemplateView):
     template_name = "usuarios/perfil.html"

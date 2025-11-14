@@ -6,7 +6,7 @@ from apps.prestamos.mixins import LoginRequiredMixin, AdminRequiredMixin
 from django.views import View
 from django.shortcuts import get_object_or_404
 from apps.catalogo.models import Libro
-from apps.prestamos.models import Prestamo
+from apps.prestamos.models import Prestamo, Reserva
 from apps.usuarios.models import PerfilUsuario
 
 
@@ -75,36 +75,43 @@ class DevolverLibroView(LoginRequiredMixin, View):
 
 class ReservarLibroView(LoginRequiredMixin, View):
     
-    def get(self, request, libro_id):
-        libro = get_object_or_404(Libro, id=libro_id)
-        return render(request, self.template_name, {'libro': libro})
-    
+
     def post(self, request, libro_id):
         libro = get_object_or_404(Libro, id=libro_id)
 
-        # Crear la reserva (sin reducir copias disponibles hasta que esté lista)
+        # Validar que realmente NO haya copias disponibles
+        if libro.copias_disponibles > 0:
+            messages.warning(request, 'Este libro tiene copias disponibles. Puedes solicitarlo en préstamo directamente.')
+            return redirect('catalogo:detalle_libro', libro_id=libro.id)
+
+        # Crear la reserva
         reserva = Prestamo.objects.create(
             usuario=request.user.perfilusuario,
             libro=libro,
-            fecha_prestamo=None,  # Se asigna cuando esté disponible
+            fecha_prestamo=None,
             fecha_devolucion=None,
             estado='reservado'
         )
 
         messages.success(request, f'Reserva confirmada para "{libro.titulo}". Te notificaremos cuando esté disponible.')
-        return redirect('prestamos:reservar_libro', libro_id=libro.id)
-
+        return redirect('prestamos:mis_reservas')
 class MisReservasView(LoginRequiredMixin, View):
+    template_name = 'prestamos/mis_reservas.html'
     # Lógica para ver las reservas del usuario
     def get(self, request):
-        return render(request, 'prestamos/mis_reservas.html')
+        reservas = Reserva.objects.filter(usuario=request.user.perfilusuario)
+        return render(request, self.template_name, {'reservas': reservas})
 
 class CancelarReservaView(LoginRequiredMixin, View):
     # Lógica para cancelar una reserva
-    def get(self, request, reserva_id):
-        return render(request, 'prestamos/cancelar_reserva.html', {'reserva_id': reserva_id})
+    def post(self, request, reserva_id):
+        reserva = get_object_or_404(Reserva, id=reserva_id, usuario=request.user.perfilusuario)
+        reserva.delete()
+        messages.success(request, "Reserva cancelada correctamente.")
+        return redirect('prestamos:mis_reservas')
     
 class EliminarPrestamoView(LoginRequiredMixin, AdminRequiredMixin, View):
+
 
     def post(self, request, prestamo_id):
         prestamo = get_object_or_404(
