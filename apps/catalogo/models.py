@@ -27,7 +27,7 @@ class Libro(models.Model):
     ano_publicacion = models.IntegerField()
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
     descripcion = models.TextField()
-    portada = models.URLField(blank=True, null=True)
+    portada = models.ImageField(upload_to='portadas/', blank=True, null=True)
     copias_totales = models.PositiveIntegerField()
     copias_disponibles = models.PositiveIntegerField()
     fecha_registro = models.DateTimeField(auto_now_add=True)

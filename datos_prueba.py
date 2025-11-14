@@ -181,7 +181,7 @@ for autor_data in autores_data:
 
 libros_data = [
     # CLARICE LISPECTOR
-    {'titulo': 'La hora de la estrella', 'autor': 'Clarice Lispector', 'isbn': '9788478444502', 
+    {'titulo': 'La hora de la estrella', 'autor': 'Clarice Lispector', 'isbn': '9788416120796', 
      'editorial': 'Siruela', 'ano': 1977, 'categoria': 'Ficcion', 
      'descripcion': 'Ultima novela de Lispector', 'copias': 3},
     {'titulo': 'La pasion segun G.H.', 'autor': 'Clarice Lispector', 'isbn': '9788478445523', 
@@ -192,7 +192,7 @@ libros_data = [
      'descripcion': 'Prosa poetica', 'copias': 2},
     
     # SYLVIA PLATH
-    {'titulo': 'La campana de cristal', 'autor': 'Sylvia Plath', 'isbn': '9788435018074', 
+    {'titulo': 'La campana de cristal', 'autor': 'Sylvia Plath', 'isbn': '9788439736349', 
      'editorial': 'Edhasa', 'ano': 1963, 'categoria': 'Ficcion', 
      'descripcion': 'Novela autobiografica', 'copias': 4},
     {'titulo': 'Ariel', 'autor': 'Sylvia Plath', 'isbn': '9788498410686', 
@@ -363,3 +363,18 @@ for reserva_data in reservas_data:
         print(f"  [ERROR] {e}")
 
 print("\nPOBLACION DE BASE DE DATOS COMPLETADA")
+
+
+# PARA CARGAR PORTADAS DE LIBROS DESDE URLS EN BASE A ISBN
+
+
+from apps.catalogo.models import Libro
+
+for libro in Libro.objects.all():
+    if libro.isbn:  # solo si tiene ISBN
+        nueva_portada = f"https://covers.openlibrary.org/b/isbn/{libro.isbn}-L.jpg"
+        libro.portada = nueva_portada
+        libro.save()
+        print(f"✓ Portada actualizada: {libro.titulo}")
+    else:
+        print(f"Sin ISBN, no se puede actualizar: {libro.titulo}")

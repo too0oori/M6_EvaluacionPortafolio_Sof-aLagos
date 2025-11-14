@@ -10,6 +10,7 @@
 
 body {
   background: var(--fondo);
+  padding-top: var(--navbar-height);
 }
 
 .navbar-personalizado
@@ -50,6 +51,11 @@ body {
 
 .punto {
   color: rgba(177, 185, 199);
+}
+
+.titulos {
+  font-family: 'Playfair Display', serif;
+  font-weight: 600;
 }
 
 /* ---- HERO AZUL ---- */
@@ -200,4 +206,19 @@ footer {
   padding: 0.8rem 1rem;
   border-radius: 10px;
   border: 1px solid #dce2f7;
+}
+
+
+/* Estilos para tarjetas de los libros */
+
+.card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.card:hover {
+    transform: translateY(-4px);
+    transition: 0.2s ease;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
 }

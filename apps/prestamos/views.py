@@ -1,13 +1,37 @@
-from django.shortcuts import render
+from datetime import timedelta, timezone
+from pyexpat.errors import messages
+from django.shortcuts import redirect, render
 from apps.prestamos.mixins import LoginRequiredMixin
 from django.views import View
+from django.shortcuts import get_object_or_404
+from apps.catalogo.models import Libro
+from apps.prestamos.models import Prestamo
 
 
 class SolicitarPrestamoView(LoginRequiredMixin, View):
     # Lógica para solicitar un préstamo
-    def get(self, request):
-        return render(request, 'prestamos/solicitar.html')
+    def post(self, request, libro_id):
+        libro = get_object_or_404(Libro, id=libro_id)
 
+        #se valida disponibilidad
+        if libro.copias_disponibles > 0:
+            return redirect('catalogo:detalle_libro', libro_id=libro.id)
+        
+        # Crear el préstamo
+        prestamo = Prestamo.objects.create(
+            usuario=request.user,
+            libro=libro,
+            fecha_prestamo=timezone.now(),
+            fecha_devolucion=timezone.now() + timedelta(days=14),
+            estado='activo'
+        )
+        # Actualizar las copias disponibles del libro
+        libro.copias_disponibles -= 1
+        libro.save()
+
+        # Redirigir al detalle del libro
+        messages.success(request, 'Libro añadido a tus préstamos exitosamente.')
+        return redirect('catalogo:detalle_libro', libro_id=libro.id)
 class MisPrestamosView(LoginRequiredMixin, View):
     # Lógica para ver los préstamos del usuario
     def get(self, request):

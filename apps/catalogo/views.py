@@ -19,6 +19,7 @@ class ListaLibrosView(View):
 
         if q:
             libros = libros.filter(titulo__icontains=q)
+            libros = libros | Libro.objects.filter(autor__nombre__icontains=q)
 
         context = {
             'libros': libros,
@@ -30,8 +31,10 @@ class ListaLibrosView(View):
 class DetalleLibroView(View):
     template_name = 'catalogo/detalle_libro.html'
 
+
     def get(self, request, libro_id):
-        return render(request, self.template_name, {'libro_id': libro_id})
+        libro = Libro.objects.get(id=libro_id)
+        return render(request, self.template_name, {'libro': libro})
 
 class BuscarLibrosView(View):
     template_name = 'catalogo/buscar_libros.html'
