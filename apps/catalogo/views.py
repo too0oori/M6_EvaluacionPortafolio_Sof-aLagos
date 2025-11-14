@@ -1,6 +1,7 @@
 from urllib import request
 from django.shortcuts import render
 from django.views import View
+from .models import Libro, Autor, Categoria
 
 class HomePageView(View):
     template_name = 'catalogo/home.html'
@@ -12,7 +13,19 @@ class ListaLibrosView(View):
     template_name = 'catalogo/lista_libros.html'
 
     def get(self, request):
-        return render(request, self.template_name)
+        q = request.GET.get('q', '')
+
+        libros = Libro.objects.all()
+
+        if q:
+            libros = libros.filter(titulo__icontains=q)
+
+        context = {
+            'libros': libros,
+            'q': q,
+        }
+
+        return render(request, self.template_name, context)
 
 class DetalleLibroView(View):
     template_name = 'catalogo/detalle_libro.html'

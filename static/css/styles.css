@@ -5,32 +5,32 @@
   --gris: #4a4a4a;
   --negro-suave: #1a1a1a;
   --fondo: #f7f9ff;
-  --navbar-height: 80px;
+  --navbar-height: 50px;
 }
 
 body {
   background: var(--fondo);
 }
 
-.navbar-transparente{
-  background: rgba(255,255,255,0.03) !important;
-  backdrop-filter: blur(14px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(14px) saturate(180%) !important;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
+.navbar-personalizado
+{
+  height: var(--navbar-height);
+  background-color: rgba(38, 127, 184) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.navbar-transparente .navbar-brand{
-  color: white !important;
-  font-family: 'Playfair Display', serif !important;
-  font-size: 1.5rem;
-  letter-spacing: -0.5px;
-}
-
-.navbar-transparente .nav-link {
+.navbar-personalizado .nav-link {
   font-family: 'Inter', sans-serif !important;
   font-weight: 500;
-  font-size: 1.1rem;
-  color: white !important;
+  font-size: 1rem;
+  color: var(--hielo) !important;
+}
+
+.navbar-brand {
+  font-family: 'Playfair Display', serif !important;
+  font-weight: 600;
+  font-size: 1.5rem;
+  color: var(--hielo) !important;
 }
 
 /* ---- TIPOGRAFÍA ---- */
@@ -49,12 +49,12 @@ body {
 }
 
 .punto {
-  color: #5a79ff;
+  color: rgba(177, 185, 199);
 }
 
 /* ---- HERO AZUL ---- */
 .hero-azul {
-  min-height: 90vh;
+  min-height: 100vh;
   background: url('../img/header.jpg') center/cover no-repeat;
   position: relative;
   overflow: hidden;
@@ -166,4 +166,38 @@ body {
 /* Footer con mejor contraste */
 footer {
   margin-top: 4rem;
+}
+
+/* -----FORMULARIOS----- */
+.form-control:focus {
+  border-color: var(--azul-profundo);
+  box-shadow: 0 0 0 0.2rem rgba(90, 121, 255, 0.25);
+}
+.btn-primary {
+  background-color: var(--azul-profundo) !important;
+  border-color: var(--azul-profundo) !important;
+  border-radius: 50px;  /* más suave y moderno */
+  padding: 0.8rem 1rem;
+  font-weight: 600;
+}
+
+.btn-primary:hover {
+  background-color: var(--azul-principal) !important;
+  border-color: var(--azul-principal) !important;
+}
+
+.card-body {
+  background-color: #ffffff;
+  padding: 3rem 2.5rem !important;
+}
+
+.card.shadow {
+  box-shadow: 0 8px 25px rgba(0,0,0,0.08) !important;
+}
+
+.mb-3 input {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border-radius: 10px;
+  border: 1px solid #dce2f7;
 }
