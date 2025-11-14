@@ -6,7 +6,7 @@ app_name = 'prestamos'
 
 urlpatterns = [
     path('mis_prestamos/', MisPrestamosView.as_view(), name='mis_prestamos'),
-    path('reservar_libro/<int:libro_id>/', ReservarLibroView.as_view(), name='reservar_libro'),  # 👈 corregido
+    path('reservar_libro/<int:libro_id>/', ReservarLibroView.as_view(), name='reservar_libro'),
     path('solicitar_prestamo/<int:libro_id>/', SolicitarPrestamoView.as_view(), name='solicitar_prestamo'),
     path('devolver_libro/<int:libro_id>/', DevolverLibroView.as_view(), name='devolver_libro'),
     path('historial_prestamos/', HistorialPrestamosView.as_view(), name='historial_prestamos'),

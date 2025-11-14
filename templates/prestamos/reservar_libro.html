@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mt-5 pt-4 mb-4 titulos">Solicitar Préstamo</h2>
+    <p>Este libro está en manos de otrx lectorx.</p>
+    <p>Todas las copias disponibles están siendo leídas. Cada una recorre ahora otra vida, otro espacio, otra memoria.
+Si quieres, puedes reservarlo y te avisaremos cuando regrese a la estantería.
+La lectura también es un acto de espera.</p>
+    
+    <form action="{% url 'prestamos:reservar_libro' libro.id %}" method="POST">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary w-100 mt-3">
+            Solicitar Préstamo
+        </button>
+    </form>
+</div>
+{% endblock %}
+

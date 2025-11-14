@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container">
+<div class="container mt-5 pt-4 mb-5">
     <div class="row">
         <div class="col-md-6">
             <img src="{{ libro.portada.url }}" alt="Imagen del libro" class="img-fluid">
@@ -13,16 +13,20 @@
             <p><strong>ISBN:</strong> {{ libro.isbn }}</p>
             <p><strong>Descripción:</strong> {{ libro.descripcion }}</p>
             <p><strong>Copias disponibles:</strong> {{ libro.copias_disponibles }}</p>
+
             {% if libro.copias_disponibles > 0 %}
                 <p class="text-success">Disponible para préstamo</p>
-                <form method="post" action="{% url 'prestamos:solicitar_prestamo' libro.id %}">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-primary">Solicitar Préstamo</button>
+
+                <a href="{% url 'prestamos:solicitar_prestamo' libro.id %}" class="btn btn-primary">
+                    Solicitar Préstamo
+                </a>
+
             {% else %}
                 <p class="text-danger">No hay copias disponibles en este momento</p>
-                <form method="post" action="{% url 'prestamos:solicitar_reserva' libro.id %}">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-secondary" disabled>Solicitar Reserva</button>
+
+                <a href="{% url 'prestamos:reservar_libro' libro.id %}" class="btn btn-secondary">
+                    Hacer Reserva
+                </a>
             {% endif %}
         </div>
     </div>

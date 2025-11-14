@@ -108,6 +108,15 @@ for data in usuarios_data:
     except Exception as e:
         print(f"    [ERROR] {data['username']}: {e}")
 
+# Asegurar que todos los usuarios tengan perfil
+
+from django.contrib.auth.models import User
+from apps.usuarios.models import PerfilUsuario
+
+for user in User.objects.all():
+    PerfilUsuario.objects.get_or_create(usuario=user)
+
+print("Perfiles creados o verificados correctamente.")
 # ============================================
 # 3. CREAR CATEGORIAS
 # ============================================

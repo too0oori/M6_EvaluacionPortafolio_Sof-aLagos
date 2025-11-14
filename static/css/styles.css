@@ -1,6 +1,6 @@
 :root {
   --azul-principal: #5a79ff;
-  --azul-profundo: #002e8b;
+  --azul-profundo: rgb(0, 46, 139);
   --hielo: #eaf0ff;
   --gris: #4a4a4a;
   --negro-suave: #1a1a1a;
@@ -221,4 +221,10 @@ footer {
     transform: translateY(-4px);
     transition: 0.2s ease;
     box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+}
+
+/* Estilos para los detalles de los libros */
+.btn-dark:hover {
+    transform: translateY(-2px);
+    transition: .2s ease;
 }

@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5 pt-4 mb-5">
+
+    <!-- Título -->
+    <h2 class="mb-4 fw-bold">{{ libro.titulo }}</h2>
+
+    <!-- Caja informativa del libro -->
+    <div class="alert alert-light border-start border-3 mb-4" style="border-color:rgb(0, 46, 139) !important;">
+        <div class="fw-semibold">{{ libro.titulo }}</div>
+        <div class="text-muted">de {{ libro.autor }}</div>
+    </div>
+
+    <!-- Texto introductorio -->
+    <p class="mb-3">
+        Este libro forma parte de un corpus vivo: una constelación de voces de mujeres que resisten,
+        recuerdan y escriben para dejar huella.
+    </p>
+
+    <p class="mb-4">
+        Antes de continuar con la solicitud, considera lo siguiente:
+    </p>
+
+    <!-- Lista poética con Bootstrap -->
+    <ul class="mb-4">
+        <li><strong>Tiempo de compañía:</strong> El libro podrá acompañarte durante 14 días, un ciclo completo para leerlo, habitarlo y devolverlo al mundo.</li>
+        <li><strong>Renovación:</strong> Si nadie más lo espera, podrás extender ese tiempo y continuar la lectura sin interrupciones.</li>
+        <li><strong>Disponibilidad:</strong> Los ejemplares son como cuerpos: finitos, compartidos, parte de una comunidad. Su préstamo depende de su presencia disponible.</li>
+        <li><strong>Devolución:</strong> Devuélvelo con cuidado —forma parte de una memoria que pasa de mano en mano.</li>
+        <li><strong>Circulación:</strong> Cada lectura sostiene la cadena de mujeres que escriben, nombran y abren caminos. Tu gesto permite que otras también encuentren estas palabras.</li>
+    </ul>
+
+    <p class="text-muted fst-italic small mb-4">
+        Si deseas continuar, «{{ libro.titulo }}» te espera.
+    </p>
+
+    <!-- Botones -->
+    <form action="{% url 'prestamos:solicitar_prestamo' libro.id %}" method="POST" class="mb-3">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-dark w-100">
+            Confirmar préstamo
+        </button>
+    </form>
+
+    <a href="{% url 'catalogo:detalle_libro' libro.id %}" class="btn btn-outline-secondary w-100">
+        Volver al libro
+    </a>
+
+</div>
+{% endblock %}
