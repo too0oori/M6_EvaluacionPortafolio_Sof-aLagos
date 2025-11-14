@@ -17,69 +17,76 @@
 
             {% if libro.copias_disponibles > 0 %}
                 <p class="text-success">Disponible para préstamo</p>
-
-                <!-- BOTÓN DEL MODAL -->
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalPrestamo">
                     Solicitar Préstamo
                 </button>
-
-                <!-- MODAL -->
-                <div class="modal fade" id="modalPrestamo" tabindex="-1" aria-labelledby="modalPrestamoLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-lg modal-dialog-centered">
-                        <div class="modal-content">
-
-                            <!-- HEADER -->
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="modalPrestamoLabel">Solicitar Préstamo</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                            </div>
-
-                            <!-- CUERPO -->
-                            <div class="modal-body">
-                                <p>
-                                    Este libro forma parte de un corpus vivo: una constelación de voces de mujeres
-                                    que resisten, recuerdan y escriben para dejar huella.
-                                </p>
-
-                                <ul>
-                                    <li>Tiempo de compañía: 14 días para leerlo, habitarlo y devolverlo al mundo.</li>
-                                    <li>Renovación: posible si nadie más lo espera.</li>
-                                    <li>Disponibilidad: los ejemplares son cuerpos finitos, compartidos.</li>
-                                    <li>Devolución: cuídalo —viaja de mano en mano, sosteniendo memoria.</li>
-                                    <li>Circulación: cada lectura mantiene viva esta cadena de voces.</li>
-                                </ul>
-
-                                <p>Si deseas continuar, <strong>{{ libro.titulo }}</strong> te espera.</p>
-                            </div>
-
-                            <!-- FOOTER -->
-                            <div class="modal-footer">
-                                <form method="post" action="{% url 'prestamos:solicitar_prestamo' libro.id %}">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-primary">Confirmar Préstamo</button>
-                                </form>
-
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                    Cancelar
-                                </button>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-
             {% else %}
                 <p class="text-danger">No hay copias disponibles en este momento</p>
-
-                <form method="post" action="{% url 'prestamos:reservar_libro' libro.id %}">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-secondary">
-                        Hacer Reserva
-                    </button>
-                </form>
-
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalReserva">
+                    Reservar
+                </button>
             {% endif %}
+        </div>
+    </div>
+</div>
 
+<!-- MODAL PRÉSTAMO -->
+<div class="modal fade" id="modalPrestamo" tabindex="-1" aria-labelledby="modalPrestamoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <form method="post" action="{% url 'prestamos:solicitar_prestamo' libro.id %}">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalPrestamoLabel">Solicitar Préstamo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        Este libro forma parte de un corpus vivo: una constelación de voces de mujeres
+                        que resisten, recuerdan y escriben para dejar huella.
+                    </p>
+                    <ul>
+                        <li>Tiempo de compañía: 14 días para leerlo, habitarlo y devolverlo al mundo.</li>
+                        <li>Renovación: posible si nadie más lo espera.</li>
+                        <li>Disponibilidad: los ejemplares son cuerpos finitos, compartidos.</li>
+                        <li>Devolución: cuídalo —viaja de mano en mano, sosteniendo memoria.</li>
+                        <li>Circulación: cada lectura mantiene viva esta cadena de voces.</li>
+                    </ul>
+                    <p>Si deseas continuar, <strong>{{ libro.titulo }}</strong> te espera.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Confirmar Préstamo</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL RESERVA -->
+<div class="modal fade" id="modalReserva" tabindex="-1" aria-labelledby="modalReservaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <form method="post" action="{% url 'prestamos:solicitar_reserva' libro.id %}">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalReservaLabel">Reservar Libro</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Este libro está en manos de otrx lectorx.</p>
+                    <p>
+                        Todas las copias disponibles están siendo leídas.
+                        Cada una recorre ahora otra vida, otro espacio, otra memoria.
+                        Si quieres, puedes reservarlo y te avisaremos cuando regrese a la estantería.
+                        La lectura también es un acto de espera.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Volver</button>
+                    <button type="submit" class="btn btn-primary">Confirmar Reserva</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
