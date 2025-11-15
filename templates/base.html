@@ -14,7 +14,7 @@
 <body class="d-flex flex-column min-vh-100">
   
   <!-- Navegación -->
-  <header>
+<header>
     <nav class="navbar navbar-expand-lg shadow-sm navbar-personalizado fixed-top">
       <div class="container">
         <a class="navbar-brand fw-bold" href="{% url 'home' %}">Corpus<span class="punto">.</span></a>
@@ -22,7 +22,7 @@
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav ms-auto">
+          <ul class="navbar-nav ms-auto align-items-lg-center">
             <li class="nav-item">
               <a class="nav-link" href="{% url 'catalogo:lista_libros' %}">Catálogo</a>
             </li>
@@ -37,32 +37,36 @@
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'usuarios:perfil' %}">Mi Perfil</a>
               </li>
+              
+              {% if user.is_superuser %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'admin:index' %}">Admin</a>
+              </li>
+              {% endif %}
+              
+              <!-- Botón Cerrar Sesión -->
+              <li class="nav-item ms-lg-2">
+                <form method="post" action="{% url 'usuarios:logout' %}" class="d-inline">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-outline-light btn-sm">
+                    <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+                  </button>
+                </form>
+              </li>
             {% else %}
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'usuarios:login' %}">Iniciar sesión</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="{% url 'usuarios:registro' %}">Regístrate</a>
+                <a class="btn btn-primary btn-sm ms-lg-2" href="{% url 'usuarios:registro' %}">Regístrate</a>
               </li>
             {% endif %}
-            {% if user.is_superuser %}
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'admin:index' %}">Admin</a>
-              </li>
-            {% endif %}
-              <li class="nav-item">
-              <form method="post" action="{% url 'usuarios:logout' %}" style="display: inline;">
-                  {% csrf_token %}
-                  <button type="submit" class="btn btn-primary mt-auto btn-sm py-1 px-2 ">
-                      Cerrar Sesión
-                  </button>
-              </form>
-              </li>
           </ul>
         </div>
       </div>
     </nav>
-  </header>
+</header>
+
 
   <!-- Mensajes Flash -->
   {% if messages %}
