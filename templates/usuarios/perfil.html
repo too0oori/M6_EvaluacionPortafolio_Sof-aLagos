@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container mt-4 mb-5">
+
+    <!-- HEADER DEL PERFIL -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm" style="border-radius: 14px;">
+                <div class="card-body p-4">
+                    <div class="row align-items-center">
+
+                        <!-- AVATAR -->
+                        <div class="col-auto">
+                            <div class="position-relative">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                     style="width: 80px; height: 80px; background: #000;">
+                                    <i class="bi bi-person text-white" style="font-size: 2.5rem;"></i>
+                                </div>
+
+                                <!-- Estado activo -->
+                                <span class="position-absolute bottom-0 end-0 translate-middle badge rounded-pill bg-danger"
+                                      style="font-size: .6rem;">
+                                    ●
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- DATOS USUARIO -->
+                        <div class="col">
+                            <h3 class="mb-1 fw-semibold" style="letter-spacing:-0.5px;">
+                                {{ user.get_full_name|default:user.username }}
+                            </h3>
+
+                            <p class="text-muted mb-1">
+                                <i class="bi bi-at me-1"></i>{{ user.username }}
+                            </p>
+
+                            <p class="text-muted small mb-0">
+                                <i class="bi bi-envelope me-1"></i>{{ user.email }}
+                                <span class="ms-3">
+                                    <i class="bi bi-calendar3 me-1"></i>
+                                    Miembro desde {{ user.date_joined|date:"M Y" }}
+                                </span>
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ESTADÍSTICAS -->
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 14px;">
+                <div class="card-body text-center p-4">
+
+                    <div class="rounded-circle d-flex align-items-center justify-content-center mb-3"
+                         style="width: 60px; height: 60px; border: 1px solid #000;">
+                        <i class="bi bi-book-half" style="font-size: 1.8rem;"></i>
+                    </div>
+
+                    <h2 class="fw-bold mb-1">{{ total_prestamos|default:0 }}</h2>
+                    <p class="text-muted mb-0 small">Préstamos totales</p>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 14px;">
+                <div class="card-body text-center p-4">
+
+                    <div class="rounded-circle d-flex align-items-center justify-content-center mb-3"
+                         style="width: 60px; height: 60px; border: 1px solid #000;">
+                        <i class="bi bi-book" style="font-size: 1.8rem;"></i>
+                    </div>
+
+                    <h2 class="fw-bold mb-1">{{ prestamos_activos|default:0 }}</h2>
+                    <p class="text-muted mb-0 small">Préstamos activos</p>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 14px;">
+                <div class="card-body text-center p-4">
+
+                    <div class="rounded-circle d-flex align-items-center justify-content-center mb-3"
+                         style="width: 60px; height: 60px; border: 1px solid #000;">
+                        <i class="bi bi-bookmark-heart" style="font-size: 1.8rem;"></i>
+                    </div>
+
+                    <h2 class="fw-bold mb-1">{{ total_reservas|default:0 }}</h2>
+                    <p class="text-muted mb-0 small">Reservas activas</p>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ACCIONES PRINCIPALES -->
+    <div class="row g-3">
+
+        <!-- Mis Préstamos -->
+        <div class="col-md-6 col-lg-3">
+            <a href="{% url 'prestamos:mis_prestamos' %}" class="text-decoration-none text-dark">
+                <div class="card border-0 shadow-sm h-100 action-card" style="border-radius: 14px;">
+                    <div class="card-body d-flex flex-column align-items-center text-center p-4">
+
+                        <div class="rounded-circle mb-3 d-flex align-items-center justify-content-center"
+                             style="width: 70px; height: 70px; border: 1px solid #000;">
+                            <i class="bi bi-book" style="font-size:2rem;"></i>
+                        </div>
+
+                        <h5 class="fw-semibold mb-2">Mis Préstamos</h5>
+                        <p class="text-muted small mb-0">Gestiona tus libros en lectura</p>
+
+                        <div class="mt-auto pt-3">
+                            <span class="badge text-dark" style="border:1px solid #000;">
+                                <i class="bi bi-book"></i>
+                                    {{ prestamos_activos|default:0 }} activos
+                            </span>
+                        </div>
+
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Mis Reservas -->
+        <div class="col-md-6 col-lg-3">
+            <a href="{% url 'prestamos:mis_reservas' %}" class="text-decoration-none text-dark">
+                <div class="card border-0 shadow-sm h-100 action-card" style="border-radius: 14px;">
+                    <div class="card-body d-flex flex-column align-items-center text-center p-4">
+
+                        <div class="rounded-circle mb-3 d-flex align-items-center justify-content-center"
+                             style="width: 70px; height: 70px; border: 1px solid #000;">
+                            <i class="bi bi-bookmark-heart" style="font-size:2rem;"></i>
+                        </div>
+
+                        <h5 class="fw-semibold mb-2">Mis Reservas</h5>
+                        <p class="text-muted small mb-0">Revisa tus libros en espera</p>
+
+                        <div class="mt-auto pt-3">
+                            <span class="badge text-dark" style="border:1px solid #000;">
+                                {{ total_reservas|default:0 }} reservas
+                            </span>
+                        </div>
+
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Buscar Libros -->
+        <div class="col-md-6 col-lg-3">
+            <a href="{% url 'catalogo:lista_libros' %}" class="text-decoration-none text-dark">
+                <div class="card border-0 shadow-sm h-100 action-card" style="border-radius: 14px;">
+                    <div class="card-body d-flex flex-column align-items-center text-center p-4">
+
+                        <div class="rounded-circle mb-3 d-flex align-items-center justify-content-center"
+                             style="width: 70px; height: 70px; border: 1px solid #000;">
+                            <i class="bi bi-search" style="font-size:2rem;"></i>
+                        </div>
+
+                        <h5 class="fw-semibold mb-2">Buscar Libros</h5>
+                        <p class="text-muted small mb-0">Explora nuestra colección</p>
+
+                        <div class="mt-auto pt-3">
+                            <span class="badge text-dark" style="border:1px solid #000;">
+                                Explorar
+                            </span>
+                        </div>
+
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Historial -->
+        <div class="col-md-6 col-lg-3">
+            <a href="#" class="text-decoration-none text-dark" onclick="alert('Próximamente'); return false;">
+                <div class="card border-0 shadow-sm h-100 action-card" style="border-radius: 14px;">
+                    <div class="card-body d-flex flex-column align-items-center text-center p-4">
+
+                        <div class="rounded-circle mb-3 d-flex align-items-center justify-content-center"
+                             style="width: 70px; height: 70px; border: 1px solid #000;">
+                            <i class="bi bi-clock-history" style="font-size:2rem;"></i>
+                        </div>
+
+                        <h5 class="fw-semibold mb-2">Historial</h5>
+                        <p class="text-muted small mb-0">Lecturas anteriores</p>
+
+                        <div class="mt-auto pt-3">
+                            <span class="badge text-dark" style="border:1px solid #000;">
+                                Próximamente
+                            </span>
+                        </div>
+
+                    </div>
+                </div>
+            </a>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

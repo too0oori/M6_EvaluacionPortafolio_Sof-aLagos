@@ -228,3 +228,24 @@ footer {
     transform: translateY(-2px);
     transition: .2s ease;
 }
+
+
+/* responsive */
+
+@media (max-width: 768px) {
+    .card {
+        margin-bottom: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .card {
+        margin-bottom: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .card {
+        margin-bottom: 1rem;
+    }
+}
