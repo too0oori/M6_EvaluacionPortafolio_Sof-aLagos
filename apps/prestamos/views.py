@@ -15,14 +15,20 @@ from django.core.exceptions import ValidationError
 class SolicitarPrestamoView(LoginRequiredMixin, View):
         
     def post(self, request, libro_id):
-        perfil = request.user.perfilusuario
+        # Obtener el libro solicitado
+        libro = get_object_or_404(Libro, id=libro_id)
+
+        # Obtener o crear perfil
+        perfil, created = PerfilUsuario.objects.get_or_create(
+            usuario=request.user
+        )
         
         prestamos_activos = Prestamo.objects.filter(
             usuario=perfil, estado='activo'
         ).count()
         if prestamos_activos >= 3:
             messages.error(request, "Ya tienes 3 préstamos activos")
-            return redirect('catalogo:detalle_libro', libro_id)
+            return redirect('catalogo:detalle_libro', libro_id=libro.id)
 
         # Creamos el préstamo SIN guardarlo aún
         prestamo = Prestamo(
@@ -45,7 +51,7 @@ class SolicitarPrestamoView(LoginRequiredMixin, View):
         except Exception:
             messages.error(request, "Ocurrió un error inesperado al procesar tu solicitud.")
 
-        return redirect('detalle_libro', libro_id=libro.id)
+        return redirect('catalogo:detalle_libro', libro_id=libro.id)
 
 
 class MisPrestamosView(LoginRequiredMixin, View):
@@ -53,18 +59,17 @@ class MisPrestamosView(LoginRequiredMixin, View):
     template_name = 'prestamos/mis_prestamos.html'
 
     def get(self, request):
+
+        perfil, created = PerfilUsuario.objects.get_or_create(usuario=request.user)
+        
         prestamos = Prestamo.objects.filter(usuario=request.user.perfilusuario)
         return render(request, self.template_name, {'prestamos': prestamos})
 
-class HistorialPrestamosView(LoginRequiredMixin, View):
-    # Lógica para ver el historial de préstamos
-    def get(self, request):
-        return render(request, 'prestamos/historial.html')
 
 class RenovarPrestamoView(LoginRequiredMixin, View):
     def post(self, request, prestamo_id):
         # Obtener el perfil del usuario actual
-        perfil = PerfilUsuario.objects.get(usuario=request.user)
+        perfil, created = PerfilUsuario.objects.get_or_create(usuario=request.user)
 
         # Obtener el préstamo perteneciente al perfil
         prestamo = get_object_or_404(Prestamo, id=prestamo_id, usuario=perfil)
