@@ -1,8 +1,9 @@
-from django.shortcuts import render
-from django.views import View
+from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q
 from .models import Libro, Autor, Categoria
-
+from django.contrib import messages
+from django.http import Http404
+from django.views import View
 class HomePageView(View):
     template_name = 'catalogo/home.html'
 
@@ -52,31 +53,10 @@ class ListaLibrosView(View):
 class DetalleLibroView(View):
     template_name = 'catalogo/detalle_libro.html'
 
-
     def get(self, request, libro_id):
-        libro = Libro.objects.get(id=libro_id)
-        return render(request, self.template_name, {'libro': libro})
-
-class BuscarLibrosView(View):
-    template_name = 'catalogo/buscar_libros.html'
-
-    def get(self, request):
-        return render(request, self.template_name)
-
-class FiltrarPorCategoriaView(View):
-    template_name = 'catalogo/filtrar.html'
-
-    def get(self, request, categoria):
-        return render(request, self.template_name, {'categoria': categoria})
-
-class ListaAutoresView(View):
-    template_name = 'catalogo/lista_autores.html'
-
-    def get(self, request):
-        return render(request, self.template_name)
-
-class DetalleAutorView(View):
-    template_name = 'catalogo/detalle_autor.html'
-
-    def get(self, request, autor_id):
-        return render(request, self.template_name, {'autor_id': autor_id})
+        try:
+            libro = get_object_or_404(Libro, id=libro_id)
+            return render(request, self.template_name, {'libro': libro})
+        except Http404:
+            messages.error(request, "Libro no encontrado")
+            return redirect('catalogo:lista_libros')

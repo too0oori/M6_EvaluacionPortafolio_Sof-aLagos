@@ -1,4 +1,4 @@
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from apps.core.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
 from django.db.models import Count
 from apps.prestamos.models import Prestamo

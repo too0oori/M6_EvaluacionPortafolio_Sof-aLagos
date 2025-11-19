@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import TemplateView, CreateView, UpdateView, DetailView
-from django.contrib.auth.mixins import LoginRequiredMixin
+from apps.core.mixins import LoginRequiredMixin
 from .forms import RegistroForm, PerfilUsuarioForm, UserForm
 from apps.prestamos.models import Prestamo, Reserva
 from apps.usuarios.models import PerfilUsuario

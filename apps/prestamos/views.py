@@ -2,7 +2,7 @@ from django.utils import timezone
 from datetime import timedelta
 from django.contrib import messages
 from django.shortcuts import redirect, render, get_object_or_404
-from apps.prestamos.mixins import LoginRequiredMixin, AdminRequiredMixin
+from apps.core.mixins import LoginRequiredMixin, AdminRequiredMixin
 from django.views import View
 from django.shortcuts import get_object_or_404
 from apps.catalogo.models import Libro
@@ -15,8 +15,14 @@ from django.core.exceptions import ValidationError
 class SolicitarPrestamoView(LoginRequiredMixin, View):
         
     def post(self, request, libro_id):
-        libro = get_object_or_404(Libro, id=libro_id)
-        perfil = PerfilUsuario.objects.get(usuario=request.user)
+        perfil = request.user.perfilusuario
+        
+        prestamos_activos = Prestamo.objects.filter(
+            usuario=perfil, estado='activo'
+        ).count()
+        if prestamos_activos >= 3:
+            messages.error(request, "Ya tienes 3 préstamos activos")
+            return redirect('catalogo:detalle_libro', libro_id)
 
         # Creamos el préstamo SIN guardarlo aún
         prestamo = Prestamo(
