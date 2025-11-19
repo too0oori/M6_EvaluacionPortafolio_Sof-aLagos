@@ -1,4 +1,6 @@
 from django.db import models
+from django.utils import timezone
+from django.core.exceptions import ValidationError
 
 class Prestamo(models.Model):
     usuario = models.ForeignKey('usuarios.PerfilUsuario', on_delete=models.CASCADE)
@@ -11,8 +13,35 @@ class Prestamo(models.Model):
         ('retrasado', 'Retrasado'),
     ], default='activo')
 
+    def clean(self):
+        # Verificar si el libro tiene copias disponibles
+        if self.libro.copias_disponibles <= 0:
+            raise ValidationError("No hay copias disponibles para este libro.")
+        
+        # Verificar si el libro ya tiene un préstamo activo
+        if Prestamo.objects.filter(libro=self.libro, estado='activo').exists():
+            raise ValidationError("El libro ya tiene un préstamo activo.")
+        
+        # Verificar si la fecha de devolución es anterior a la fecha actual
+        if self.fecha_devolucion < timezone.now().date():
+            raise ValidationError("La fecha de devolución no puede ser anterior a la fecha actual.")
+        
+        prestamos_activos = Prestamo.objects.filter(libro=self.libro, estado='activo').count()
+        if prestamos_activos >= 3:
+            raise ValidationError("EEl usuario ya tiene el máximo permitido de préstamos activos (3).")
+        
+        def save(self, *args, **kwargs):
+            # ejecuta las validaciones
+            self.clean()  
+            super().save(*args, **kwargs)
+
+            # Si se crea por primera vez, resta una copia del libro
+            if self.estado == 'activo':
+                self.libro.copias_disponibles = max(self.libro.copias_disponibles - 1, 0)
+                self.libro.save()
+
     def __str__(self):
-        return f'Préstamo de {self.libro.titulo} a {self.usuario.usuario.username}'
+        return f"Préstamo de {self.libro.titulo} a {self.usuario.usuario.username}"
 
     class Meta:
         verbose_name = 'Préstamo'

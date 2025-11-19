@@ -1,44 +1,46 @@
 from django.utils import timezone
 from datetime import timedelta
 from django.contrib import messages
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from apps.prestamos.mixins import LoginRequiredMixin, AdminRequiredMixin
 from django.views import View
 from django.shortcuts import get_object_or_404
 from apps.catalogo.models import Libro
 from apps.prestamos.models import Prestamo, Reserva
 from apps.usuarios.models import PerfilUsuario
-
+from apps.usuarios.forms import PerfilUsuarioForm
+from django.core.exceptions import ValidationError
 
 
 class SolicitarPrestamoView(LoginRequiredMixin, View):
+        
     def post(self, request, libro_id):
         libro = get_object_or_404(Libro, id=libro_id)
-
-        # Obtener perfil de usuario
         perfil = PerfilUsuario.objects.get(usuario=request.user)
 
-        # Validar disponibilidad
-        if libro.copias_disponibles <= 0:
-            messages.error(request, "No hay copias disponibles.")
-            return redirect('catalogo:detalle_libro', libro_id=libro.id)
-
-        # Crear préstamo
-        prestamo = Prestamo.objects.create(
+        # Creamos el préstamo SIN guardarlo aún
+        prestamo = Prestamo(
             usuario=perfil,
             libro=libro,
             fecha_prestamo=timezone.now(),
-            fecha_devolucion=timezone.now() + timedelta(days=14),
-            estado='activo'
+            estado='activo',
         )
 
-        # Actualizar copias disponibles
-        libro.copias_disponibles -= 1
-        libro.save()
+        try:
+            prestamo.save()  # esto ejecuta clean() automáticamente
+            messages.success(request, f"✔ Préstamo creado para '{libro.titulo}'.")
+        except ValidationError as e:
+            # El ValidationError puede venir con múltiples mensajes
+            if hasattr(e, "messages"):
+                for error in e.messages:
+                    messages.error(request, error)
+            else:
+                messages.error(request, str(e))
+        except Exception:
+            messages.error(request, "Ocurrió un error inesperado al procesar tu solicitud.")
 
-        # Confirmación
-        messages.success(request, "El libro ha sido añadido a tus préstamos.")
-        return redirect('prestamos:mis_prestamos')
+        return redirect('detalle_libro', libro_id=libro.id)
+
 
 class MisPrestamosView(LoginRequiredMixin, View):
     # Lógica para ver los préstamos del usuario
