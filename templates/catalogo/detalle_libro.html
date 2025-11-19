@@ -8,24 +8,51 @@
         </div>
 
         <div class="col-md-6">
-            <h1>{{ libro.titulo }}</h1>
-            <p><strong>Autor:</strong> {{ libro.autor }}</p>
-            <p><strong>Editorial:</strong> {{ libro.editorial }}</p>
-            <p><strong>ISBN:</strong> {{ libro.isbn }}</p>
-            <p><strong>Descripción:</strong> {{ libro.descripcion }}</p>
-            <p><strong>Copias disponibles:</strong> {{ libro.copias_disponibles }}</p>
-
-            {% if libro.copias_disponibles > 0 %}
-                <p class="text-success">Disponible para préstamo</p>
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalPrestamo">
-                    Solicitar Préstamo
-                </button>
-            {% else %}
-                <p class="text-danger">No hay copias disponibles en este momento</p>
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalReserva">
-                    Reservar
-                </button>
-            {% endif %}
+            <div class="card">
+                <div class="card-body">
+                    <h2>{{ libro.titulo }}</h2>
+                    <p><strong>Autor:</strong> {{ libro.autor }}</p>
+                    <p><strong>ISBN:</strong> {{ libro.isbn }}</p>
+                    <p><strong>Editorial:</strong> {{ libro.editorial }}</p>
+                    
+                    <hr>
+                    
+                    <div class="book-actions">
+                        {% if user.is_authenticated %}
+                            <!-- Usuario autenticado -->
+                            {% if libro.copias_disponibles > 0 %}
+                                <!-- HAY copias disponibles -->
+                                <p class="text-success mb-3">
+                                    <i class="bi bi-check-circle-fill"></i> 
+                                    Disponible para préstamo ({{ libro.copias_disponibles }} copia{{ libro.copias_disponibles|pluralize }})
+                                </p>
+                                <button type="button" class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#modalPrestamo">
+                                    <i class="bi bi-book"></i> Solicitar Préstamo
+                                </button>
+                            {% else %}
+                                <!-- NO hay copias disponibles -->
+                                <p class="text-danger mb-3">
+                                    <i class="bi bi-x-circle-fill"></i> 
+                                    No hay copias disponibles en este momento
+                                </p>
+                                <button type="button" class="btn btn-warning w-100" data-bs-toggle="modal" data-bs-target="#modalReserva">
+                                    <i class="bi bi-bookmark-heart"></i> Reservar
+                                </button>
+                            {% endif %}
+                        {% else %}
+                            <!-- Usuario NO autenticado -->
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle"></i> 
+                                Debes <a href="{% url 'usuarios:login' %}?next={{ request.path }}" class="alert-link">iniciar sesión</a> 
+                                para solicitar préstamos o reservas.
+                            </div>
+                            <a href="{% url 'usuarios:login' %}?next={{ request.path }}" class="btn btn-primary w-100">
+                                <i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
