@@ -133,7 +133,7 @@ class CancelarReservaView(LoginRequiredMixin, View):
         messages.success(request, "Reserva cancelada correctamente.")
         return redirect('prestamos:mis_reservas')
     
-class EliminarPrestamoView(LoginRequiredMixin, AdminRequiredMixin, View):
+class EliminarPrestamoView(AdminRequiredMixin, LoginRequiredMixin, View):
 
 
     def post(self, request, prestamo_id):
