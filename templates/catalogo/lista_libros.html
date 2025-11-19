@@ -3,48 +3,93 @@
 {% block title %}Catálogo - Corpus.{% endblock %}
 
 {% block content %}
-        
+
+<div class="container mt-5 pt-4 mb-5">
+{% extends 'base.html' %}
+
+{% block title %}Catálogo - Corpus.{% endblock %}
+
+{% block content %}
+
 <div class="container mt-5 pt-4 mb-5">
 
-    <!-- HEADER CON BÚSQUEDA -->
-    <div class="mb-4">
-        <div class="row align-items-center mb-3">
-            <div class="col-md-6">
-                <h2 class="titulos mb-0">Catálogo</h2>
-                {% if q %}
-                    <p class="text-muted mt-2 mb-0">
-                        Resultados para "<strong>{{ q }}</strong>"
-                    </p>
-                {% endif %}
-            </div>
-            <div class="col-md-6 text-md-end">
-                {% if total_resultados %}
-                    <span class="badge bg-dark px-3 py-2">
-                        {{ total_resultados }} libro{{ total_resultados|pluralize }}
-                    </span>
-                {% endif %}
-            </div>
-        </div>
+    <div class="row">
+<!-- SIDEBAR -->
+        <aside class="col-md-3">
 
-        <!-- BARRA DE BÚSQUEDA -->
-        <form method="get" class="d-flex gap-2">
-            <input 
-                type="text" 
-                name="q" 
-                class="form-control form-control-lg" 
-                placeholder="Buscar por título, autor, ISBN o descripción..." 
-                value="{{ q }}"
-                autofocus>
-            <button type="submit" class="btn btn-primary px-4">
-                <i class="bi bi-search"></i> Buscar
-            </button>
-            {% if q %}
+            <h5 class="fw-bold">Categorías</h5>
+            <ul class="list-group mb-4">
+                {% for cat in categorias %}
+                <a href="?categoria={{ cat.nombre }}{% if q %}&q={{ q }}{% endif %}"
+                   class="list-group-item list-group-item-action 
+                   {% if categoria_activa == cat.nombre %}active{% endif %}">
+                    {{ cat.nombre }}
+                </a>
+                {% endfor %}
+            </ul>
+
+            <h5 class="fw-bold">Autoras</h5>
+            <ul class="list-group">
+                {% for a in autores %}
+                <a href="?autor={{ a.nombre }}{% if q %}&q={{ q }}{% endif %}"
+                   class="list-group-item list-group-item-action
+                   {% if autor_activo == a.nombre %}active{% endif %}">
+                    {{ a.nombre }}
+                </a>
+                {% endfor %}
+            </ul>
+
+        </aside>
+<!-- CONTENIDO PRINCIPAL -->
+        <div class="col-md-9">
+
+            <!-- HEADER -->
+            <div class="row align-items-center mb-3">
+                <div class="col-md-6">
+                    <h2 class="titulos mb-0">Catálogo</h2>
+                    {% if q %}
+                        <p class="text-muted mt-2 mb-0">
+                            Resultados para "<strong>{{ q }}</strong>"
+                        </p>
+                    {% endif %}
+                </div>
+                <div class="col-md-6 text-md-end">
+                    {% if total_resultados %}
+                        <span class="badge bg-dark px-3 py-2">
+                            {{ total_resultados }} libro{{ total_resultados|pluralize }}
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- BARRA DE BÚSQUEDA -->
+            <form method="get" class="d-flex gap-2 mb-4">
+                <input 
+                    type="text" 
+                    name="q" 
+                    class="form-control form-control-lg" 
+                    placeholder="Buscar por título, autor, ISBN o descripción..." 
+                    value="{{ q }}"
+                >
+
+                {% if categoria_activa %}
+                    <input type="hidden" name="categoria" value="{{ categoria_activa }}">
+                {% endif %}
+
+                {% if autor_activo %}
+                    <input type="hidden" name="autor" value="{{ autor_activo }}">
+                {% endif %}
+
+                <button type="submit" class="btn btn-primary px-4">
+                    <i class="bi bi-search"></i> Buscar
+                </button>
+
+                {% if q or categoria_activa or autor_activo %}
                 <a href="{% url 'catalogo:lista_libros' %}" class="btn btn-outline-secondary">
                     <i class="bi bi-x-circle"></i> Limpiar
                 </a>
-            {% endif %}
-        </form>
-    </div>
+                {% endif %}
+            </form>
 
     <!-- MENSAJE CUANDO NO HAY RESULTADOS -->
     {% if q and not libros %}

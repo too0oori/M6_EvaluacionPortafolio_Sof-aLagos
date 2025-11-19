@@ -14,13 +14,22 @@ class ListaLibrosView(View):
 
     def get(self, request):
         q = request.GET.get('q', '').strip()
+        categoria = request.GET.get('categoria', '').strip()
+        autor = request.GET.get('autor', '').strip()
+
+        libros = Libro.objects.all()
 
         if q:
-            libros = Libro.objects.filter(
+            libros = libros.filter(
                 Q(titulo__icontains=q) | Q(autor__nombre__icontains=q) | Q(autor__apellido__icontains=q) | Q(isbn__icontains=q)
-            ).select_related('autor', 'categoria')
-        else:
-            libros = Libro.objects.select_related('autor', 'categoria')
+            )
+
+        if categoria:
+            libros = libros.filter(categoria__nombre=categoria)
+
+        if autor:
+            libros = libros.filter(autor__nombre=autor)
+
 
         from django.core.paginator import Paginator #para paginación
         
@@ -31,6 +40,10 @@ class ListaLibrosView(View):
         context = {
             'libros': page_obj,
             'q': q,
+            'categorias': Categoria.objects.all(),
+            'autores': Autor.objects.all(),
+            'categoria_activa': categoria,
+            'autor_activo': autor,
             'total_resultados': libros.count()
         }
 
