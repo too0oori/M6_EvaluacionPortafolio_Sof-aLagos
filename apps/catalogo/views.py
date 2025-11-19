@@ -1,6 +1,6 @@
-from urllib import request
 from django.shortcuts import render
 from django.views import View
+from django.db.models import Q
 from .models import Libro, Autor, Categoria
 
 class HomePageView(View):
@@ -13,17 +13,25 @@ class ListaLibrosView(View):
     template_name = 'catalogo/lista_libros.html'
 
     def get(self, request):
-        q = request.GET.get('q', '')
-
-        libros = Libro.objects.all()
+        q = request.GET.get('q', '').strip()
 
         if q:
-            libros = libros.filter(titulo__icontains=q)
-            libros = libros | Libro.objects.filter(autor__nombre__icontains=q)
+            libros = Libro.objects.filter(
+                Q(titulo__icontains=q) | Q(autor__nombre__icontains=q) | Q(autor__apellido__icontains=q) | Q(isbn__icontains=q)
+            ).select_related('autor', 'categoria')
+        else:
+            libros = Libro.objects.select_related('autor', 'categoria')
+
+        from django.core.paginator import Paginator #para paginación
+        
+        paginator = Paginator(libros, 12)  # 12 libros por página
+        page_number = request.GET.get('page', 1)
+        page_obj = paginator.get_page(page_number)
 
         context = {
-            'libros': libros,
+            'libros': page_obj,
             'q': q,
+            'total_resultados': libros.count()
         }
 
         return render(request, self.template_name, context)

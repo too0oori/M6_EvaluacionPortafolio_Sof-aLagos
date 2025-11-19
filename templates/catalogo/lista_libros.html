@@ -1,39 +1,288 @@
 {% extends 'base.html' %}
 
+{% block title %}Catálogo - Corpus.{% endblock %}
+
 {% block content %}
 
-<div class ="container mt-5 pt-4 mb-5">
+<div class="container mt-5 pt-4 mb-5">
 
+    <!-- HEADER CON BÚSQUEDA -->
     <div class="mb-4">
-        <h2 class="mb-3 titulos">Catálogo</h2>
+        <div class="row align-items-center mb-3">
+            <div class="col-md-6">
+                <h2 class="titulos mb-0">Catálogo</h2>
+                {% if q %}
+                    <p class="text-muted mt-2 mb-0">
+                        Resultados para "<strong>{{ q }}</strong>"
+                    </p>
+                {% endif %}
+            </div>
+            <div class="col-md-6 text-md-end">
+                {% if total_resultados %}
+                    <span class="badge bg-dark px-3 py-2">
+                        {{ total_resultados }} libro{{ total_resultados|pluralize }}
+                    </span>
+                {% endif %}
+            </div>
+        </div>
 
-        <form method="get" class="d-flex gap-2 w-100">
-            <input type="text" name="q" class="form-control" placeholder="Buscar libros..." value="{{ q }}">
-            <button type="submit" class="btn btn-primary">Buscar</button>
+        <!-- BARRA DE BÚSQUEDA -->
+        <form method="get" class="d-flex gap-2">
+            <input 
+                type="text" 
+                name="q" 
+                class="form-control form-control-lg" 
+                placeholder="Buscar por título, autor, ISBN o descripción..." 
+                value="{{ q }}"
+                autofocus>
+            <button type="submit" class="btn btn-primary px-4">
+                <i class="bi bi-search"></i> Buscar
+            </button>
+            {% if q %}
+                <a href="{% url 'catalogo:lista_libros' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-x-circle"></i> Limpiar
+                </a>
+            {% endif %}
         </form>
     </div>
 
-    <div class="row g-4">
-        {% for libro in libros %}
-        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-            <div class="card h-100">
-                {% if libro.portada %}
-                    <img src="{{ libro.portada.url }}" class="card-img-top" alt="{{ libro.titulo }}">
-                {% else %}
-                <div class="bg-secondary text-white d-flex align-items-center justify-content-center" style="height: 300px;">
-                    <span class="fs-5">Sin Portada</span>
-                </div>
-                {% endif %}
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">{{ libro.titulo }}</h5>
-                    <p class="card-text text-muted mb-2">por {{ libro.autor }}</p>
-                    <p class="card-text flex-grow-1">{{ libro.descripcion|truncatechars:120 }}</p>
-                    <p class = "card-text "><span class="badge bg-light text-dark border">{{ libro.categoria }}</span></p>
-                    <a href="{% url 'catalogo:detalle_libro' libro.id %}" class="btn btn-outline-primary mt-auto">Explorar libro</a>
+    <!-- MENSAJE CUANDO NO HAY RESULTADOS -->
+    {% if q and not libros %}
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-8">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body py-5">
+                        <i class="bi bi-search" style="font-size: 4rem; color: #6c757d;"></i>
+                        <h3 class="mt-4">No se encontraron resultados</h3>
+                        <p class="text-muted mb-4">
+                            No hay libros que coincidan con "<strong>{{ q }}</strong>"
+                        </p>
+                        <p class="text-muted small mb-4">
+                            Intenta con otros términos o explora todo el catálogo
+                        </p>
+                        <a href="{% url 'catalogo:lista_libros' %}" class="btn btn-primary">
+                            <i class="bi bi-arrow-left"></i> Ver todo el catálogo
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
-        {% endfor %}
-    </div>
+    {% else %}
+
+        <!-- GRID DE LIBROS -->
+        <div class="row g-4">
+            {% for libro in libros %}
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="card h-100 shadow-sm">
+                    
+                    <!-- PORTADA -->
+                    <div class="position-relative">
+                        {% if libro.portada or libro.isbn %}
+                            <img 
+                                src="{{ libro.get_portada_url }}" 
+                                class="card-img-top" 
+                                alt="{{ libro.titulo }}"
+                                style="height: 350px; object-fit: cover;"
+                                onerror="this.onerror=null; this.src='https://via.placeholder.com/300x450/e9ecef/6c757d?text=Sin+Portada';">
+                        {% else %}
+                            <div class="bg-secondary text-white d-flex align-items-center justify-content-center" 
+                                 style="height: 350px;">
+                                <div class="text-center">
+                                    <i class="bi bi-book" style="font-size: 3rem;"></i>
+                                    <p class="mt-2 mb-0">Sin Portada</p>
+                                </div>
+                            </div>
+                        {% endif %}
+                        
+                        <!-- BADGE DE DISPONIBILIDAD -->
+                        <div class="position-absolute top-0 end-0 m-2">
+                            {% if libro.copias_disponibles > 0 %}
+                                <span class="badge bg-success">
+                                    <i class="bi bi-check-circle-fill"></i> Disponible
+                                </span>
+                            {% else %}
+                                <span class="badge bg-danger">
+                                    <i class="bi bi-x-circle-fill"></i> No disponible
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- CONTENIDO -->
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title mb-2" style="min-height: 3rem;">
+                            {{ libro.titulo|truncatechars:60 }}
+                        </h5>
+                        
+                        <p class="card-text text-muted mb-2">
+                            <i class="bi bi-person"></i> {{ libro.autor.nombre }}
+                        </p>
+                        
+                        <p class="card-text text-muted small mb-2">
+                            <i class="bi bi-calendar"></i> {{ libro.ano_publicacion }}
+                        </p>
+                        
+                        <p class="card-text flex-grow-1 small">
+                            {{ libro.descripcion|truncatechars:100 }}
+                        </p>
+                        
+                        <!-- CATEGORÍA Y COPIAS -->
+                        <div class="mb-3">
+                            <span class="badge bg-light text-dark border">
+                                <i class="bi bi-tag"></i> {{ libro.categoria.nombre }}
+                            </span>
+                            
+                            {% if libro.copias_disponibles > 0 %}
+                                <span class="badge bg-light text-dark border ms-1">
+                                    <i class="bi bi-stack"></i> {{ libro.copias_disponibles }} copia{{ libro.copias_disponibles|pluralize }}
+                                </span>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- BOTÓN -->
+                        <a href="{% url 'catalogo:detalle_libro' libro.id %}" 
+                           class="btn btn-outline-primary mt-auto">
+                            <i class="bi bi-arrow-right-circle"></i> Explorar libro
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- PAGINACIÓN -->
+        {% if libros.has_other_pages %}
+        <nav aria-label="Paginación de catálogo" class="mt-5">
+            <ul class="pagination justify-content-center">
+                
+                <!-- BOTÓN PRIMERA PÁGINA -->
+                {% if libros.number > 2 %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1{% if q %}&q={{ q }}{% endif %}" 
+                       aria-label="Primera">
+                        <span aria-hidden="true">&laquo;&laquo;</span>
+                    </a>
+                </li>
+                {% endif %}
+                
+                <!-- BOTÓN ANTERIOR -->
+                {% if libros.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" 
+                       href="?page={{ libros.previous_page_number }}{% if q %}&q={{ q }}{% endif %}"
+                       aria-label="Anterior">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">
+                        <span aria-hidden="true">&laquo;</span>
+                    </span>
+                </li>
+                {% endif %}
+                
+                <!-- NÚMEROS DE PÁGINA -->
+                {% for num in libros.paginator.page_range %}
+                    {% if libros.number == num %}
+                        <!-- Página actual -->
+                        <li class="page-item active" aria-current="page">
+                            <span class="page-link">
+                                {{ num }}
+                                <span class="visually-hidden">(actual)</span>
+                            </span>
+                        </li>
+                    {% elif num > libros.number|add:'-3' and num < libros.number|add:'3' %}
+                        <!-- Páginas cercanas -->
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}{% if q %}&q={{ q }}{% endif %}">
+                                {{ num }}
+                            </a>
+                        </li>
+                    {% elif num == 1 or num == libros.paginator.num_pages %}
+                        <!-- Primera y última siempre visibles -->
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}{% if q %}&q={{ q }}{% endif %}">
+                                {{ num }}
+                            </a>
+                        </li>
+                    {% elif num == libros.number|add:'-3' or num == libros.number|add:'3' %}
+                        <!-- Puntos suspensivos -->
+                        <li class="page-item disabled">
+                            <span class="page-link">...</span>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                
+                <!-- BOTÓN SIGUIENTE -->
+                {% if libros.has_next %}
+                <li class="page-item">
+                    <a class="page-link" 
+                       href="?page={{ libros.next_page_number }}{% if q %}&q={{ q }}{% endif %}"
+                       aria-label="Siguiente">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">
+                        <span aria-hidden="true">&raquo;</span>
+                    </span>
+                </li>
+                {% endif %}
+                
+                <!-- BOTÓN ÚLTIMA PÁGINA -->
+                {% if libros.number < libros.paginator.num_pages|add:'-1' %}
+                <li class="page-item">
+                    <a class="page-link" 
+                       href="?page={{ libros.paginator.num_pages }}{% if q %}&q={{ q }}{% endif %}"
+                       aria-label="Última">
+                        <span aria-hidden="true">&raquo;&raquo;</span>
+                    </a>
+                </li>
+                {% endif %}
+                
+            </ul>
+            
+            <!-- INFO DE PAGINACIÓN -->
+            <div class="text-center mt-3">
+                <p class="text-muted small mb-0">
+                    Página {{ libros.number }} de {{ libros.paginator.num_pages }} 
+                    <span class="mx-2">|</span>
+                    Mostrando 
+                    <strong>{{ libros.start_index }}</strong> - 
+                    <strong>{{ libros.end_index }}</strong> 
+                    de 
+                    <strong>{{ libros.paginator.count }}</strong> 
+                    libro{{ libros.paginator.count|pluralize }}
+                </p>
+            </div>
+        </nav>
+        {% endif %}
+
+    {% endif %}
+
 </div>
+
 {% endblock content %}
+
+{% block scripts %}
+<script>
+// Autoenfoque en input de búsqueda al cargar
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.querySelector('input[name="q"]');
+    if (searchInput && searchInput.value === '') {
+        searchInput.focus();
+    }
+});
+
+// Prevenir envío de búsqueda vacía
+document.querySelector('form').addEventListener('submit', function(e) {
+    const input = this.querySelector('input[name="q"]');
+    if (input.value.trim() === '') {
+        e.preventDefault();
+        window.location.href = "{% url 'catalogo:lista_libros' %}";
+    }
+});
+</script>
+{% endblock %}

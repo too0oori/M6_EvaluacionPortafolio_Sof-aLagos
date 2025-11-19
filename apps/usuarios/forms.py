@@ -26,8 +26,31 @@ class RegistroForm(forms.ModelForm):
             user.save()
         return user
 
+class PerfilUsuarioForm(forms.ModelForm):
+    """Formulario para datos extendidos del perfil"""
+    class Meta:
+        model = PerfilUsuario
+        fields = ['telefono', 'direccion']
+        widgets = {
+            'telefono': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': '+56 9 1234 5678'
+            }),
+            'direccion': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 3,
+                'placeholder': 'Tu dirección completa'
+            })
+        }
 
-class PerfilForm(forms.ModelForm):
+
+class UserForm(forms.ModelForm):
+    """Formulario para datos básicos del usuario"""
     class Meta:
         model = User
-        fields = ["first_name", "last_name", "email"]
+        fields = ['first_name', 'last_name', 'email']
+        widgets = {
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'})
+        }

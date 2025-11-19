@@ -84,13 +84,23 @@ class ReservarLibroView(LoginRequiredMixin, View):
             messages.warning(request, 'Este libro tiene copias disponibles. Puedes solicitarlo en préstamo directamente.')
             return redirect('catalogo:detalle_libro', libro_id=libro.id)
 
-        # Crear la reserva
-        reserva = Prestamo.objects.create(
+
+        # Verificar que no tenga ya una reserva activa
+        reserva_existente = Reserva.objects.filter(
             usuario=request.user.perfilusuario,
             libro=libro,
-            fecha_prestamo=None,
-            fecha_devolucion=None,
-            estado='reservado'
+            estado='pendiente'
+        ).exists()
+        
+        if reserva_existente:
+            messages.info(request, 'Ya tienes una reserva activa para este libro.')
+            return redirect('prestamos:mis_reservas')
+        
+        # Crear la reserva
+        reserva = Reserva.objects.create(
+            usuario=request.user.perfilusuario,
+            libro=libro,
+            estado='pendiente' 
         )
 
         messages.success(request, f'Reserva confirmada para "{libro.titulo}". Te notificaremos cuando esté disponible.')

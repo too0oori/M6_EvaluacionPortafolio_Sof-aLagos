@@ -5,7 +5,7 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import TemplateView, CreateView, UpdateView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .forms import RegistroForm, PerfilForm
+from .forms import RegistroForm, PerfilUsuarioForm, UserForm
 from apps.prestamos.models import Prestamo, Reserva
 from apps.usuarios.models import PerfilUsuario
 
@@ -27,17 +27,11 @@ class CustomLogoutView(LoginRequiredMixin, LogoutView):
     next_page = reverse_lazy('usuarios:login')
 
 class PerfilUsuarioView(LoginRequiredMixin, DetailView):
-    """
-    Vista para ver el perfil del usuario actual.
-    """
     model = User
     template_name = "usuarios/perfil.html"
     context_object_name = 'user'
     
     def get_object(self):
-        """
-        Retorna el usuario actual (no el perfil)
-        """
         return self.request.user
     
     def get_context_data(self, **kwargs):
@@ -48,42 +42,37 @@ class PerfilUsuarioView(LoginRequiredMixin, DetailView):
             usuario=self.request.user
         )
         
-        if created:
-            print(f"✓ Perfil creado para el usuario {self.request.user.username}")
+
+        context['user_form'] = UserForm(instance=self.request.user)
+        context['perfil_form'] = PerfilUsuarioForm(instance=perfil)
+        context['perfil'] = perfil
         
-        # Agregar formulario de perfil
-        context['perfil_form'] = PerfilForm(instance=perfil)
-        context['perfil'] = perfil  # Agregar el perfil al contexto
-        
-        # Contar TODOS los préstamos del usuario
+        # Estadísticas
         context['total_prestamos'] = Prestamo.objects.filter(
             usuario=perfil
         ).count()
         
-        # Contar solo préstamos ACTIVOS
         context['prestamos_activos'] = Prestamo.objects.filter(
             usuario=perfil,
             estado='activo'
         ).count()
         
-        # Contar préstamos VENCIDOS
-        context['prestamos_vencidos'] = Prestamo.objects.filter(
-            usuario=perfil,
-            estado='vencido'
-        ).count()
+        #aggregate para mejor performance
+        from django.db.models import Count, Q
         
-        # Contar préstamos DEVUELTOS
-        context['prestamos_devueltos'] = Prestamo.objects.filter(
-            usuario=perfil,
-            estado='devuelto'
-        ).count()
+        stats = Prestamo.objects.filter(usuario=perfil).aggregate(
+            total=Count('id'),
+            activos=Count('id', filter=Q(estado='activo')),
+            devueltos=Count('id', filter=Q(estado='devuelto')),
+            retrasados=Count('id', filter=Q(estado='retrasado'))
+        )
         
-        # Contar TODAS las reservas
+        context.update(stats)
+        
         context['total_reservas'] = Reserva.objects.filter(
             usuario=perfil
         ).count()
         
-        # Contar reservas PENDIENTES
         context['reservas_pendientes'] = Reserva.objects.filter(
             usuario=perfil,
             estado='pendiente'
@@ -91,11 +80,9 @@ class PerfilUsuarioView(LoginRequiredMixin, DetailView):
         
         return context
 
-
-
 class EditarPerfilView(LoginRequiredMixin, UpdateView):
     model = User
-    form_class = PerfilForm
+    form_class = PerfilUsuarioForm
     template_name = "usuarios/editar_perfil.html"
     success_url = reverse_lazy("usuarios:perfil")
 
