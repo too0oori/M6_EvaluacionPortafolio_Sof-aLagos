@@ -21,7 +21,7 @@ class ListaLibrosView(View):
 
         if q:
             libros = libros.filter(
-                Q(titulo__icontains=q) | Q(autor__nombre__icontains=q) | Q(autor__apellido__icontains=q) | Q(isbn__icontains=q)
+                Q(titulo__icontains=q) | Q(autor__nombre__icontains=q) | Q(isbn__icontains=q)
             )
 
         if categoria:
