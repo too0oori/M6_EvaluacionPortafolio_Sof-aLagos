@@ -10,7 +10,7 @@ from apps.prestamos.models import Prestamo, Reserva
 from apps.usuarios.models import PerfilUsuario
 from apps.usuarios.forms import PerfilUsuarioForm
 from django.core.exceptions import ValidationError
-
+from django.db import transaction
 
 class SolicitarPrestamoView(LoginRequiredMixin, View):
         
@@ -27,31 +27,46 @@ class SolicitarPrestamoView(LoginRequiredMixin, View):
             usuario=perfil, estado='activo'
         ).count()
         if prestamos_activos >= 3:
-            messages.error(request, "Ya tienes 3 préstamos activos")
+            messages.error(request, "Ya tienes 3 préstamos activos. Debes devolver uno antes de solicitar otro.")
+            return redirect('catalogo:detalle_libro', libro_id=libro.id)
+        
+        # Verificar disponibilidad
+        if libro.copias_disponibles <= 0:
+            messages.warning(request, "No hay copias disponibles. Puedes reservar este libro.")
             return redirect('catalogo:detalle_libro', libro_id=libro.id)
 
-        # Creamos el préstamo SIN guardarlo aún
-        prestamo = Prestamo(
-            usuario=perfil,
-            libro=libro,
-            fecha_prestamo=timezone.now(),
-            estado='activo',
-        )
-
+       
+        # Crear préstamo dentro de una transacción
         try:
-            prestamo.save()  # esto ejecuta clean() automáticamente
-            messages.success(request, f"✔ Préstamo creado para '{libro.titulo}'.")
+            with transaction.atomic():
+                prestamo = Prestamo(
+                    usuario=perfil,
+                    libro=libro,
+                    estado='activo',
+                )
+                prestamo.save()
+                
+            messages.success(request, f"✔ Préstamo creado para '{libro.titulo}'. Tienes 14 días para devolverlo.")
+            
         except ValidationError as e:
-            # El ValidationError puede venir con múltiples mensajes
-            if hasattr(e, "messages"):
+            # Manejar errores de validación
+            if hasattr(e, 'message_dict'):
+                for field, errors in e.message_dict.items():
+                    for error in errors:
+                        messages.error(request, error)
+            elif hasattr(e, 'messages'):
                 for error in e.messages:
                     messages.error(request, error)
             else:
                 messages.error(request, str(e))
-        except Exception:
-            messages.error(request, "Ocurrió un error inesperado al procesar tu solicitud.")
-
+                
+        except Exception as e:
+            # Error inesperado
+            messages.error(request, f"Error inesperado: {str(e)}")
+            print(f"Error en SolicitarPrestamoView: {e}")  # Para debugging
+            
         return redirect('catalogo:detalle_libro', libro_id=libro.id)
+
 
 
 class MisPrestamosView(LoginRequiredMixin, View):

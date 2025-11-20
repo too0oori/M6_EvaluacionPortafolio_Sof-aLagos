@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from django.core.exceptions import ValidationError
+from datetime import timedelta
 
 class Prestamo(models.Model):
     usuario = models.ForeignKey('usuarios.PerfilUsuario', on_delete=models.CASCADE)
@@ -22,23 +23,36 @@ class Prestamo(models.Model):
         if Prestamo.objects.filter(libro=self.libro, estado='activo').exists():
             raise ValidationError("El libro ya tiene un préstamo activo.")
         
-        # Verificar si la fecha de devolución es anterior a la fecha actual
-        if self.fecha_devolucion < timezone.now().date():
-            raise ValidationError("La fecha de devolución no puede ser anterior a la fecha actual.")
-        
+        if self.fecha_devolucion is not None:
+                if self.fecha_devolucion < timezone.now().date():
+                    raise ValidationError("La fecha de devolución no puede ser anterior a la fecha actual.")
+            
         prestamos_activos = Prestamo.objects.filter(libro=self.libro, estado='activo').count()
         if prestamos_activos >= 3:
             raise ValidationError("El usuario ya tiene el máximo permitido de préstamos activos (3).")
         
     def save(self, *args, **kwargs):
-        # ejecuta las validaciones
-        self.clean()  
-        super().save(*args, **kwargs)
+        """Guardar y actualizar copias disponibles"""
+
+        # Establecer fecha de devolución si no existe (14 días desde hoy)
+        if self.pk is None and self.fecha_devolucion is None:
+            self.fecha_devolucion = timezone.now().date() + timedelta(days=14)
+
+        # Solo validar al crear
+        if self.pk is None:
+            self.full_clean()
+            # Guardar el préstamo
+            super().save(*args, **kwargs)
 
         # Si se crea por primera vez, resta una copia del libro
-        if self.estado == 'activo':
-            self.libro.copias_disponibles = max(self.libro.copias_disponibles - 1, 0)
-            self.libro.save()
+            if self.estado == 'activo':
+                self.libro.copias_disponibles = max(self.libro.copias_disponibles - 1, 0)
+                self.libro.save()
+            
+            else:
+                # Si ya existe, solo guardar
+                super().save(*args, **kwargs)
+
 
     def __str__(self):
         return f"Préstamo de {self.libro.titulo} a {self.usuario.usuario.username}"
