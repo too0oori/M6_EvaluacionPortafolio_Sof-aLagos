@@ -142,7 +142,7 @@ M6_EVALUACIONPORTAFOLIO/
 ![Catalogo](docs/screenshots/catalogo.JPG)
 
 ### Gestión de Préstamos
-![Prestamos](docs/screenshots/prestamos.JPG)
+![Prestamos](docs/screenshots/gestion.JPG)
 
 ---
 
