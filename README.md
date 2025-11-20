@@ -135,7 +135,14 @@ M6_EVALUACIONPORTAFOLIO/
 
 ## ■ Capturas de Pantalla
 
+### Página Principal
+![Home](docs/screenshots/home.png)
 
+### Catálogo
+![Catalogo](docs/screenshots/catalogo.png)
+
+### Gestión de Préstamos
+![Prestamos](docs/screenshots/prestamos.png)
 
 ---
 
@@ -150,17 +157,21 @@ DEBUG=False
 ALLOWED_HOSTS=tudominio.com
 ```
 
-### Archivos Estáticos en Producción
-```bash
-python manage.py collectstatic
-```
 
----
+## 🔑 Credenciales de Demo
 
-## 🧪 Testing
-```bash
-python manage.py test
-```
+Para probar el sistema, usa estas credenciales:
+
+**Usuario Regular:**
+- Usuario: `michi.michi`
+- Contraseña: `usuario123`
+
+**Bibliotecario:**
+- Usuario: `harito.haru`
+- Contraseña: `biblio123`
+
+**Administrador:**
+- Crear con: `python manage.py createsuperuser`
 
 ---
 
