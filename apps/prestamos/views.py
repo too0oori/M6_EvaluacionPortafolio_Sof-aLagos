@@ -41,14 +41,16 @@ class SolicitarPrestamoView(LoginRequiredMixin, View):
         # Crear préstamo dentro de una transacción
         try:
             with transaction.atomic():
-                prestamo = Prestamo(
+                prestamo = Prestamo.objects.create(
                     usuario=perfil,
                     libro=libro,
-                    estado='activo',
+                    estado='activo'
                 )
-                prestamo.save()
                 
-            messages.success(request, f"✔ Préstamo creado para '{libro.titulo}'. Tienes 14 días para devolverlo.")
+                messages.success(
+                    request, 
+                    f"✔ Préstamo creado para '{libro.titulo}'. Tienes 14 días."
+                )
             
         except ValidationError as e:
             # Manejar errores de validación

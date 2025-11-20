@@ -37,6 +37,14 @@
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'usuarios:perfil' %}">Mi Perfil</a>
               </li>
+
+                {% if user.groups.all.0.name == 'Bibliotecarios' or user.is_staff %}
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'prestamos:gestion_prestamos' %}">
+                    <i class="bi bi-gear"></i> Gestión
+                  </a>
+                </li>
+                {% endif %}
               
               {% if user.is_superuser %}
               <li class="nav-item">

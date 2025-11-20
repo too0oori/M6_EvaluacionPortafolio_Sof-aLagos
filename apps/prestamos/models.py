@@ -14,22 +14,38 @@ class Prestamo(models.Model):
         ('retrasado', 'Retrasado'),
     ], default='activo')
 
-    def clean(self):
-        # Verificar si el libro tiene copias disponibles
-        if self.libro.copias_disponibles <= 0:
-            raise ValidationError("No hay copias disponibles para este libro.")
-        
-        # Verificar si el libro ya tiene un préstamo activo
-        if Prestamo.objects.filter(libro=self.libro, estado='activo').exists():
-            raise ValidationError("El libro ya tiene un préstamo activo.")
-        
-        if self.fecha_devolucion is not None:
-                if self.fecha_devolucion < timezone.now().date():
-                    raise ValidationError("La fecha de devolución no puede ser anterior a la fecha actual.")
-            
-        prestamos_activos = Prestamo.objects.filter(libro=self.libro, estado='activo').count()
-        if prestamos_activos >= 3:
-            raise ValidationError("El usuario ya tiene el máximo permitido de préstamos activos (3).")
+def clean(self):
+    # Verificar copias disponibles
+    if self.libro.copias_disponibles <= 0:
+        raise ValidationError("No hay copias disponibles para este libro.")
+    
+    # Validar que el usuario no tenga este libro prestado
+    if self.pk is None:  # Solo al crear
+        if Prestamo.objects.filter(
+            usuario=self.usuario, 
+            libro=self.libro, 
+            estado='activo'
+        ).exists():
+            raise ValidationError(
+                f"Ya tienes un préstamo activo de '{self.libro.titulo}'."
+            )
+    
+    # Validar fechas
+    if self.fecha_devolucion and self.fecha_devolucion < timezone.now().date():
+        raise ValidationError(
+            "La fecha de devolución no puede ser anterior a hoy."
+        )
+    
+    # Validar límite de préstamos activos
+    prestamos_activos = Prestamo.objects.filter(
+        usuario=self.usuario, 
+        estado='activo'
+    ).count()
+    
+    if self.pk is None and prestamos_activos >= 3:
+        raise ValidationError(
+            "Ya tienes el máximo de 3 préstamos activos."
+        )
         
     def save(self, *args, **kwargs):
         """Guardar y actualizar copias disponibles"""
