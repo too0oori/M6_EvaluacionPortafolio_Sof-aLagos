@@ -8,9 +8,8 @@
 
     <div class="row">
 
-        <!--sidebar-->
-        <aside class="col-md-3">
-
+        <!-- SIDEBAR (solo desktop) -->
+        <aside id="filtrosSidebar" class="col-lg-3 mb-4 d-none d-lg-block">
             <h5 class="fw-bold">Categorías</h5>
             <ul class="list-group mb-4">
                 {% for cat in categorias %}
@@ -32,35 +31,48 @@
                 </a>
                 {% endfor %}
             </ul>
-
         </aside>
 
-        <!--contenido principal-->
-        <div class="col-md-9">
 
-            <!-- HEADER -->
-            <div class="row align-items-center mb-3">
+        <!-- CONTENIDO PRINCIPAL -->
+        <div class="col-lg-9">
 
-                <div class="col-md-6">
-                    <h2 class="titulos mb-0">Catálogo</h2>
+            <!-- HEADER DEL CATÁLOGO -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
 
-                    {% if q %}
-                        <p class="text-muted mt-2 mb-0">
-                            Resultados para "<strong>{{ q }}</strong>"
-                        </p>
-                    {% endif %}
-                </div>
+                <h2 class="titulos mb-0">Catálogo</h2>
 
-                <div class="col-md-6 text-md-end">
-                    {% if total_resultados %}
-                        <span class="badge bg-dark px-3 py-2">
-                            {{ total_resultados }} libro{{ total_resultados|pluralize }}
-                        </span>
-                    {% endif %}
-                </div>
-
+                <!-- BOTÓN FILTROS SOLO MOBILE -->
+                <button id="btnFiltros" class="btn d-lg-none">
+                    <i class="bi bi-funnel"></i>
+                </button>
             </div>
 
+            <!-- SIDEBAR MÓVIL (desplegable) -->
+            <div id="filtrosSidebarMobile" class="d-lg-none mb-3" style="display: none;">
+                <!-- Aquí replicamos el contenido del sidebar -->
+                <h5 class="fw-bold">Categorías</h5>
+                <ul class="list-group mb-4">
+                    {% for cat in categorias %}
+                    <a href="?categoria={{ cat.nombre }}{% if q %}&q={{ q }}{% endif %}"
+                       class="list-group-item list-group-item-action 
+                       {% if categoria_activa == cat.nombre %}active{% endif %}">
+                        {{ cat.nombre }}
+                    </a>
+                    {% endfor %}
+                </ul>
+
+                <h5 class="fw-bold">Autoras</h5>
+                <ul class="list-group">
+                    {% for a in autores %}
+                    <a href="?autor={{ a.nombre }}{% if q %}&q={{ q }}{% endif %}"
+                       class="list-group-item list-group-item-action
+                       {% if autor_activo == a.nombre %}active{% endif %}">
+                        {{ a.nombre }}
+                    </a>
+                    {% endfor %}
+                </ul>
+            </div>
             <!-- BARRA DE BÚSQUEDA -->
             <form method="get" class="d-flex gap-2 mb-4">
 
@@ -127,8 +139,7 @@
                                     <img 
                                         src="{{ libro.portada.url }}" 
                                         class="card-img-top" 
-                                        alt="{{ libro.titulo }}"
-                                        style="height: 350px; object-fit: cover;">
+                                        alt="{{ libro.titulo }}">
                                 {% else %}
                                     <div class="bg-secondary text-white d-flex align-items-center justify-content-center" 
                                          style="height: 350px;">
@@ -258,6 +269,11 @@ document.querySelector('form').addEventListener('submit', function(e) {
         e.preventDefault();
         window.location.href = "{% url 'catalogo:lista_libros' %}";
     }
+});
+
+document.getElementById("btnFiltros").addEventListener("click", function() {
+    const panel = document.getElementById("filtrosSidebarMobile");
+    panel.style.display = panel.style.display === "none" ? "block" : "none";
 });
 </script>
 {% endblock %}

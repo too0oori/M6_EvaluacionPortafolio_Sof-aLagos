@@ -8,13 +8,15 @@
   --navbar-height: 50px;
 }
 
+/* global */
 body {
   background: var(--fondo);
   padding-top: var(--navbar-height);
+  color: var(--negro-suave);
 }
 
-.navbar-personalizado
-{
+/* navbar */
+.navbar-personalizado {
   height: var(--navbar-height);
   background-color: rgba(38, 127, 184) !important;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -34,8 +36,7 @@ body {
   color: var(--hielo) !important;
 }
 
-/* ---- TIPOGRAFÍA ---- */
-
+/* hero */
 .titulo-hero {
   font-family: 'Playfair Display', serif;
   font-size: 5rem;
@@ -58,7 +59,6 @@ body {
   font-weight: 600;
 }
 
-/* ---- HERO AZUL ---- */
 .hero-azul {
   min-height: 100vh;
   background: url('../img/header.jpg') center/cover no-repeat;
@@ -77,7 +77,7 @@ body {
     rgba(0, 10, 60, 0.25),
     rgba(0, 0, 0, 0.15)
   );
-  backdrop-filter: blur(1px); 
+  backdrop-filter: blur(1px);
   z-index: 1;
 }
 
@@ -86,18 +86,33 @@ body {
   z-index: 2;
 }
 
-/* Botones */
-.btn-light {
-  border-radius: 100px;
-  font-weight: 500;
-}
-
+/* botones */
+.btn-light,
 .btn-outline-light {
   border-radius: 100px;
   font-weight: 500;
 }
 
-/* Iconos Bootstrap Icons */
+.btn-primary {
+  background-color: var(--azul-profundo) !important;
+  border-color: var(--azul-profundo) !important;
+  border-radius: 50px;
+  padding: 0.8rem 1rem;
+  font-weight: 600;
+  transition: 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: var(--azul-principal) !important;
+  border-color: var(--azul-principal) !important;
+}
+
+.btn-dark:hover {
+  transform: translateY(-2px);
+  transition: 0.2s ease;
+}
+
+/* iconos y efectos hover */
 .icono-feature {
   font-size: 3rem;
   color: #1a1a1a;
@@ -106,12 +121,6 @@ body {
   transition: all 0.3s ease;
 }
 
-.tarjeta-hover:hover .icono-feature {
-  color: var(--azul-profundo);
-  transform: scale(1.1);
-}
-
-/* Efecto hover sutil en tarjetas */
 .tarjeta-hover {
   transition: transform 0.3s ease, background-color 0.3s ease;
   border-radius: 8px;
@@ -122,19 +131,12 @@ body {
   background-color: var(--hielo);
 }
 
-/* Animación suave de entrada */
-@keyframes aparecerSuave {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.tarjeta-hover:hover .icono-feature {
+  color: var(--azul-profundo);
+  transform: scale(1.1);
 }
 
-/* Línea decorativa en nav-links al hover */
+/* linea debajo del nav link */
 .nav-link {
   position: relative;
   transition: color 0.3s ease;
@@ -156,7 +158,7 @@ body {
   width: 80%;
 }
 
-/* Ajuste de badges al hover */
+/* badges */
 .badge {
   transition: all 0.3s ease;
 }
@@ -164,34 +166,21 @@ body {
 .badge:hover {
   background-color: var(--azul-profundo) !important;
   transform: scale(1.05);
-  cursor: default;
 }
 
-.accent {
-  color: var(--azul-profundo);
+/* cards */
+.card {
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  transition: all 0.3s ease;
+  overflow: hidden;
 }
 
-/* Footer con mejor contraste */
-footer {
-  margin-top: 4rem;
-}
-
-/* -----FORMULARIOS----- */
-.form-control:focus {
-  border-color: var(--azul-profundo);
-  box-shadow: 0 0 0 0.2rem rgba(90, 121, 255, 0.25);
-}
-.btn-primary {
-  background-color: var(--azul-profundo) !important;
-  border-color: var(--azul-profundo) !important;
-  border-radius: 50px;  /* más suave y moderno */
-  padding: 0.8rem 1rem;
-  font-weight: 600;
-}
-
-.btn-primary:hover {
-  background-color: var(--azul-principal) !important;
-  border-color: var(--azul-principal) !important;
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  border-color: var(--azul-principal);
 }
 
 .card-body {
@@ -199,55 +188,408 @@ footer {
   padding: 3rem 2.5rem !important;
 }
 
-.card.shadow {
-  box-shadow: 0 8px 25px rgba(0,0,0,0.08) !important;
+/* formularios */
+.form-control:focus {
+  border-color: var(--azul-profundo);
+  box-shadow: 0 0 0 0.2rem rgba(90, 121, 255, 0.25);
+}
+
+.form-control,
+.form-select {
+  border-radius: 10px;
 }
 
 .mb-3 input {
-  width: 100%;
   padding: 0.8rem 1rem;
   border-radius: 10px;
   border: 1px solid #dce2f7;
 }
 
-
-/* Estilos para tarjetas de los libros */
-
-.card {
-    border: none;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-.card:hover {
-    transform: translateY(-4px);
-    transition: 0.2s ease;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+/* espaciado */
+footer {
+  margin-top: 4rem;
 }
 
-/* Estilos para los detalles de los libros */
-.btn-dark:hover {
-    transform: translateY(-2px);
-    transition: .2s ease;
+/* filtros en desktop - se ven siempre */
+
+@media (min-width: 992px) {
+  #filtrosSidebar {
+    display: block !important;
+  }
+  #filtrosSidebarMobile {
+    display: none !important;
+  }
+  #btnFiltros {
+    display: none !important;
+  }
 }
 
+/* filtros en tablet - estilo panel */
+@media (max-width: 991px) {
+  #btnFiltros {
+    display: inline-flex !important;
+    align-items: center;
+    gap: .5rem;
+    background: white;
+    color: var(--negro-suave);
+    padding: .7rem 1.2rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: .95rem;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    margin-bottom: 1rem;
+    transition: all .2s ease;
+  }
 
-/* responsive */
+  #btnFiltros:hover {
+    background: var(--hielo);
+    border-color: var(--azul-profundo);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  }
 
-@media (max-width: 768px) {
-    .card {
-        margin-bottom: 1rem;
+  #btnFiltros:active {
+    transform: scale(.98);
+  }
+
+  #filtrosSidebar {
+    display: none !important;
+  }
+  
+  #filtrosSidebarMobile {
+    background: white;
+    border: 1px solid rgba(0,0,0,0.12);
+    padding: 1rem;
+    border-radius: 10px;
+  }
+}
+
+  @keyframes slideDown {
+    from { 
+      opacity: 0; 
+      transform: translateY(-10px); 
     }
-}
+    to { 
+      opacity: 1; 
+      transform: translateY(0); 
+    }
+  }
 
+  #filtrosSidebar .list-group-item {
+    padding: .8rem 1rem;
+    border-radius: 8px;
+    margin-bottom: .5rem;
+    border: 1px solid #e5e5e5;
+    transition: all .2s ease;
+  }
+
+  #filtrosSidebar .list-group-item:hover {
+    background: var(--hielo);
+    border-color: var(--azul-principal);
+  }
+
+  #filtrosSidebar .list-group-item.active {
+    background: var(--azul-profundo);
+    border-color: var(--azul-profundo);
+    color: white;
+  }
+
+  #filtrosSidebar h5 {
+    margin-top: 1rem;
+    margin-bottom: .8rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--azul-profundo);
+  }
+
+  #filtrosSidebar h5:first-child {
+    margin-top: 0;
+  }
+
+/* mobile */
 @media (max-width: 576px) {
-    .card {
-        margin-bottom: 1rem;
-    }
+
+    body {
+    padding-top: calc(var(--navbar-height) - 5px) !important;
 }
 
-@media (max-width: 480px) {
-    .card {
-        margin-bottom: 1rem;
-    }
+  /* hero mas compacto */
+  .hero-azul {
+    min-height: 60vh !important;
+    padding-top: calc(var(--navbar-height) + 10px) !important;
+    background-position: center top !important;
+  }
+
+  .titulo-hero {
+    font-size: 2.3rem !important;
+    line-height: 1.15 !important;
+    margin: 0 auto 0.5rem;
+    text-align: center;
+    padding: 0 1rem;
+  }
+
+  .subtitulo-hero {
+    font-size: 1rem !important;
+    max-width: 90%;
+    margin: 0 auto;
+    text-align: center;
+    opacity: .95;
+  }
+
+  /* boton hamburguesa */
+  .navbar-toggler {
+    border: none !important;
+    padding: .4rem .6rem;
+    background: rgba(255,255,255,0.15);
+    border-radius: 8px;
+  }
+
+  .navbar-toggler-icon {
+    filter: brightness(100) contrast(200);
+  }
+
+  /* menu desplegado */
+  .navbar-collapse {
+    background: rgba(38, 127, 184, 0.95);
+    padding: 1rem 1.25rem;
+    border-radius: 12px;
+    margin-top: .5rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  }
+
+  .navbar-personalizado .nav-link {
+    color: white !important;
+    padding: .75rem 0 !important;
+    font-size: 1.15rem;
+    margin-bottom: .3rem;
+    text-align: center;
+  }
+
+  .navbar-personalizado .nav-link::after {
+    background: white !important;
+  }
+
+  /* cards mas comodas */
+  .card {
+    padding: 1rem !important;
+    border-radius: 14px !important;
+    margin-bottom: 1rem !important;
+  }
+
+  .card-body {
+    padding: 1.2rem !important;
+  }
+
+  .card-img-top {
+    height: 180px !important;
+    object-fit: cover !important;
+  }
+
+  .card-title {
+    font-size: 1rem !important;
+    margin-bottom: .35rem;
+  }
+
+  /* botones mas faciles de tocar */
+  .btn {
+    padding: .55rem .9rem !important;
+    font-size: .9rem !important;
+    border-radius: 12px !important;
+  }
+
+  /* boton filtros limpio y minimal */
+  #btnFiltros {
+    display: inline-flex !important;
+    align-items: center;
+    gap: .5rem;
+    background: white;
+    color: var(--negro-suave);
+    padding: .6rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: .9rem;
+    font-weight: 500;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    transition: all .2s ease;
+  }
+
+  #btnFiltros:hover {
+    background: var(--hielo);
+    border-color: var(--azul-profundo);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  }
+
+  #btnFiltros:active {
+    transform: scale(.98);
+  }
+
+  /* panel de filtros */
+  #filtrosSidebar {
+    margin-top: .8rem;
+    padding: 1.3rem;
+    background: white;
+    border-radius: 12px;
+    display: none;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+    border: 1px solid #e5e5e5;
+  }
+
+  /* buscador full width */
+  form.d-flex.gap-2 {
+    flex-direction: column !important;
+    gap: .8rem !important;
+  }
+
+  form.d-flex.gap-2 .form-control {
+    width: 100% !important;
+    padding: .8rem 1rem !important;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    font-size: .95rem;
+  }
+
+  form.d-flex.gap-2 .btn-primary {
+    width: 100% !important;
+    padding: .8rem 1rem !important;
+    font-weight: 600;
+  }
+
+  form.d-flex.gap-2 .btn-outline-secondary {
+    width: 100% !important;
+    padding: .7rem 1rem !important;
+    border-color: #ddd;
+    color: var(--gris);
+  }
+
+  /* detalle libro */
+  .container .row > .col-md-6:first-child {
+    margin-bottom: 1.5rem;
+  }
+
+  .container .row > .col-md-6:first-child img {
+    width: 100%;
+    max-height: 300px;
+    border-radius: 12px;
+    object-fit: cover;
+  }
+
+  .detalle-libro h1,
+  .detalle-libro h2,
+  .detalle-libro h3 {
+    text-align: center;
+  }
+
+  .detalle-libro p {
+    font-size: .95rem;
+    line-height: 1.4;
+  }
+
+  /* header perfil */
+  .card-body .row.align-items-center {
+    text-align: center;
+  }
+
+  .card-body .row.align-items-center .col-auto,
+  .card-body .row.align-items-center .col {
+    max-width: 100%;
+    flex: 0 0 100%;
+    margin-bottom: 1rem;
+  }
+
+  .card-body .rounded-circle {
+    width: 70px !important;
+    height: 70px !important;
+  }
+
+  /* stats */
+  .row.g-3.mb-4 .card-body {
+    padding: 2rem 1.5rem !important;
+  }
+
+  .row.g-3.mb-4 h2 {
+    font-size: 1.4rem;
+  }
+
+  /* action cards */
+  .action-card {
+    text-align: center;
+  }
+
+  .action-card .rounded-circle {
+    width: 55px !important;
+    height: 55px !important;
+  }
+
+  .action-card h5 {
+    font-size: 1rem;
+    margin-bottom: .4rem;
+  }
+
+  .action-card p {
+    font-size: .85rem !important;
+  }
+
+  /* tablas prestamos */
+  .table-responsive {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 10px;
+    box-shadow: 0 0 0 1px rgba(0,0,0,.05);
+  }
+
+  table.table {
+    white-space: nowrap;
+    font-size: .85rem;
+  }
+
+  table.table thead th {
+    font-size: .8rem !important;
+    padding: .6rem .5rem !important;
+  }
+
+  table.table tbody td {
+    padding: .55rem .5rem !important;
+  }
+
+  table.table button.btn-sm {
+    padding: .3rem .45rem !important;
+    font-size: .75rem !important;
+    border-radius: 6px !important;
+  }
+
+  /* general */
+  img {
+    max-width: 100%;
+    height: auto !important;
+  }
+
+  .card-img-top {
+    height: 180px !important;
+    object-fit: cover !important;
+    border-radius: 10px;
+  }
+
+  footer {
+    padding: 2rem 0 !important;
+    font-size: .85rem !important;
+  }
+
+  h1 { font-size: 1.6rem !important; }
+  h2 { font-size: 1.4rem !important; }
+  h3 { font-size: 1.2rem !important; }
+}
+
+  .container.mt-5.pt-4 {
+    margin-top: 1rem !important;
+    padding-top: 0.5rem !important;
+}
+
+  .mt-5, .my-5 {
+    margin-top: 1.5rem !important;
+}
+
+  .mb-5, .my-5 {
+    margin-bottom: 1.5rem !important;
 }
