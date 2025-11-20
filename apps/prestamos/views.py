@@ -2,7 +2,7 @@ from django.utils import timezone
 from datetime import timedelta
 from django.contrib import messages
 from django.shortcuts import redirect, render, get_object_or_404
-from apps.core.mixins import LoginRequiredMixin, AdminRequiredMixin
+from apps.core.mixins import LoginRequiredMixin, AdminRequiredMixin, BibliotecarioRequiredMixin
 from django.views import View
 from django.shortcuts import get_object_or_404
 from apps.catalogo.models import Libro
@@ -11,6 +11,8 @@ from apps.usuarios.models import PerfilUsuario
 from apps.usuarios.forms import PerfilUsuarioForm
 from django.core.exceptions import ValidationError
 from django.db import transaction
+from django.views.generic import ListView
+
 
 class SolicitarPrestamoView(LoginRequiredMixin, View):
         
@@ -96,11 +98,6 @@ class RenovarPrestamoView(LoginRequiredMixin, View):
         messages.success(request, "Has renovado tu préstamo por 14 días más.")
         return redirect('prestamos:mis_prestamos')
 
-class DevolverLibroView(LoginRequiredMixin, View):
-    # Lógica para devolver un libro
-    def get(self, request, prestamo_id):
-        return render(request, 'prestamos/devolver.html', {'prestamo_id': prestamo_id})
-
 class ReservarLibroView(LoginRequiredMixin, View):
     
 
@@ -148,22 +145,56 @@ class CancelarReservaView(LoginRequiredMixin, View):
         messages.success(request, "Reserva cancelada correctamente.")
         return redirect('prestamos:mis_reservas')
     
-class EliminarPrestamoView(AdminRequiredMixin, LoginRequiredMixin, View):
+class GestionPrestamosView(BibliotecarioRequiredMixin, ListView):
+    """Vista para que bibliotecarios gestionen préstamos"""
+    model = Prestamo
+    template_name = 'prestamos/gestion_prestamos.html'
+    context_object_name = 'prestamos'
+    paginate_by = 20
+    
+    def get_queryset(self):
+        queryset = Prestamo.objects.select_related(
+            'usuario__usuario', 'libro'
+        ).order_by('-fecha_prestamo')
+    
+        return queryset
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['total_prestamos'] = Prestamo.objects.count()
+        context['prestamos_activos'] = Prestamo.objects.filter(estado='activo').count()
+        context['prestamos_retrasados'] = Prestamo.objects.filter(estado='retrasado').count()
+        return context
+    
 
-
+class GestionReservasView(BibliotecarioRequiredMixin, ListView):
+    """Vista para que bibliotecarios gestionen reservas"""
+    model = Reserva
+    template_name = 'prestamos/gestion_reservas.html'
+    context_object_name = 'reservas'
+    paginate_by = 20
+    
+    def get_queryset(self):
+        return Reserva.objects.select_related(
+            'usuario__usuario', 'libro'
+        ).order_by('-fecha_reserva')
+class MarcarDevueltoView(BibliotecarioRequiredMixin, View):
+    """Marcar préstamo como devuelto"""
+    
     def post(self, request, prestamo_id):
-        prestamo = get_object_or_404(
-            Prestamo,
-            id=prestamo_id,
-            usuario=request.user.perfilusuario
-        )
-
-        libro = prestamo.libro
-
-        prestamo.delete()
-
-        libro.copias_disponibles += 1
-        libro.save()
-
-        messages.success(request, "Préstamo eliminado correctamente.")
-        return redirect('prestamos:mis_prestamos')
+        prestamo = get_object_or_404(Prestamo, id=prestamo_id)
+        
+        if prestamo.estado != 'devuelto':
+            prestamo.estado = 'devuelto'
+            prestamo.fecha_devolucion = timezone.now().date()
+            prestamo.save()
+            
+            # Devolver copia al libro
+            prestamo.libro.copias_disponibles += 1
+            prestamo.libro.save()
+            
+            messages.success(request, f'Préstamo de "{prestamo.libro.titulo}" marcado como devuelto.')
+        else:
+            messages.info(request, 'Este préstamo ya estaba devuelto.')
+        
+        return redirect('prestamos:gestion_prestamos')

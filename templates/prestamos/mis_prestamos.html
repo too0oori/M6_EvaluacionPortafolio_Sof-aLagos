@@ -44,15 +44,6 @@
                         data-bs-target="#modalRenovar{{ prestamo.id }}">
                         Renovar experiencia
                     </button>
-                    
-                    {% if user.is_staff %}
-                    <button 
-                        class="btn btn-danger mt-2"
-                        data-bs-toggle="modal"
-                        data-bs-target="#modalEliminar{{ prestamo.id }}">
-                        Eliminar préstamo
-                    </button>
-                    {% endif %}
                 </div>
             </div>
         </div>
@@ -94,38 +85,6 @@
             </div>
         </div>
     </div>
-
-    <!-- MODAL ELIMINAR -->
-    {% if user.is_staff %}
-    <div class="modal fade" id="modalEliminar{{ prestamo.id }}" tabindex="-1" aria-labelledby="modalEliminarLabel{{ prestamo.id }}" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalEliminarLabel{{ prestamo.id }}">
-                        Eliminar Préstamo
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-
-                <div class="modal-body">
-                    <p>
-                        Estás a punto de eliminar el préstamo de <strong>{{ prestamo.libro.titulo }}</strong>.
-                    </p>
-                </div>
-
-                <div class="modal-footer">
-                    <form method="post" action="{% url 'prestamos:eliminar_prestamo' prestamo.id %}" style="display: inline;">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger">Eliminar Préstamo</button>
-                    </form>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        Cancelar
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-    {% endif %}
     
     {% endfor %}
     {% endif %}

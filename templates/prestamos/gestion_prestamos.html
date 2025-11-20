@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <h1 class="mb-4">Gestión de Préstamos</h1>
+    
+    <!-- Estadísticas -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3>{{ total_prestamos }}</h3>
+                    <p class="text-muted">Total Préstamos</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 class="text-success">{{ prestamos_activos }}</h3>
+                    <p class="text-muted">Activos</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 class="text-danger">{{ prestamos_retrasados }}</h3>
+                    <p class="text-muted">Retrasados</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Filtros -->
+    <form method="get" class="mb-4">
+        <div class="row g-2">
+            <div class="col-md-6">
+                <input type="text" name="q" class="form-control" 
+                       placeholder="Buscar por libro o usuario..." 
+                       value="{{ request.GET.q }}">
+            </div>
+            <div class="col-md-3">
+                <select name="estado" class="form-select">
+                    <option value="">Todos los estados</option>
+                    <option value="activo" {% if request.GET.estado == 'activo' %}selected{% endif %}>Activo</option>
+                    <option value="devuelto" {% if request.GET.estado == 'devuelto' %}selected{% endif %}>Devuelto</option>
+                    <option value="retrasado" {% if request.GET.estado == 'retrasado' %}selected{% endif %}>Retrasado</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+            </div>
+        </div>
+    </form>
+    
+    <!-- Tabla de préstamos -->
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Usuario</th>
+                    <th>Libro</th>
+                    <th>Fecha Préstamo</th>
+                    <th>Devolución</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for prestamo in prestamos %}
+                <tr>
+                    <td>{{ prestamo.usuario.usuario.username }}</td>
+                    <td>{{ prestamo.libro.titulo }}</td>
+                    <td>{{ prestamo.fecha_prestamo|date:"d/m/Y" }}</td>
+                    <td>{{ prestamo.fecha_devolucion|date:"d/m/Y" }}</td>
+                    <td>
+                        {% if prestamo.estado == 'activo' %}
+                            <span class="badge bg-success">Activo</span>
+                        {% elif prestamo.estado == 'devuelto' %}
+                            <span class="badge bg-secondary">Devuelto</span>
+                        {% else %}
+                            <span class="badge bg-danger">Retrasado</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if prestamo.estado == 'activo' %}
+                        <form method="post" action="{% url 'prestamos:marcar_devuelto' prestamo.id %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-success">
+                                <i class="bi bi-check-circle"></i> Marcar Devuelto
+                            </button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center">No hay préstamos registrados</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Paginación -->
+    {% if is_paginated %}
+    <nav>
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+            </li>
+            {% endif %}
+            
+            <li class="page-item active">
+                <span class="page-link">{{ page_obj.number }}</span>
+            </li>
+            
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}
