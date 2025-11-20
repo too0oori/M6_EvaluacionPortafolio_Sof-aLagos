@@ -136,13 +136,13 @@ M6_EVALUACIONPORTAFOLIO/
 ## ■ Capturas de Pantalla
 
 ### Página Principal
-![Home](docs/screenshots/home.png)
+![Home](docs/screenshots/home.jpg)
 
 ### Catálogo
-![Catalogo](docs/screenshots/catalogo.png)
+![Catalogo](docs/screenshots/catalogo.jpg)
 
 ### Gestión de Préstamos
-![Prestamos](docs/screenshots/prestamos.png)
+![Prestamos](docs/screenshots/prestamos.jpg)
 
 ---
 
